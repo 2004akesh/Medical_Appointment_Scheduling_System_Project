@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Appointment</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div class="navbar">
+    <a class="logo" href="#">🏥 HealthCare <span>Management System</span></a>
+    <nav>
+        <th:block th:if="${session.userRole == 'ADMIN'}">
+            <a href="/home/admin"><span>🏠</span> Home</a>
+            <a href="/patients"><span>👤</span> Patients</a>
+            <a href="/doctors"><span>🩺</span> Doctors</a>
+            <a href="/appointments" class="active"><span>📅</span> Appointments</a>
+            <a href="/scheduling"><span>🗓️</span> Scheduling</a>
+            <a href="/feedback"><span>💬</span> Feedback</a>
+            <a href="/admin"><span>⚙️</span> Admin</a>
+            <a href="/admin/requests"><span>🔔</span> Requests</a>
+        </th:block>
+        <th:block th:if="${session.userRole == 'DOCTOR'}">
+            <a href="/home/doctor"><span>🏠</span> Home</a>
+            <a href="/appointments" class="active"><span>📅</span> Appointments</a>
+            <a href="/scheduling"><span>🗓️</span> Scheduling</a>
+            <a href="/feedback"><span>💬</span> Feedback</a>
+        </th:block>
+        <a href="/logout" class="logout-btn"><span>🚪</span> Logout</a>
+    </nav>
+</div>
+<div class="main-content">
+    <div class="page-header">
+        <div><h1>Edit Appointment</h1><p>Update appointment details</p></div>
+        <a href="/appointments" class="btn btn-primary">← Back to List</a>
+    </div>
+    <div class="card" style="max-width: 600px;">
+        <form th:action="@{/appointments/edit/{id}(id=${appointment.id})}" th:object="${appointment}" method="post">
+            <div class="form-group"><label>Patient Name</label><input type="text" th:field="*{patientName}" required/></div>
+            <div class="form-group"><label>Doctor Name</label><input type="text" th:field="*{doctorName}" required/></div>
+            <div class="form-group"><label>Date</label><input type="date" th:field="*{date}" required/></div>
+            <div class="form-group">
+                <label>Time Slot</label>
+                <select th:field="*{timeSlot}">
+                    <option value="08:00 AM">08:00 AM</option>
+                    <option value="09:00 AM">09:00 AM</option>
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="02:00 PM">02:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="04:00 PM">04:00 PM</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select th:field="*{status}">
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Urgency</label>
+                <select th:field="*{urgency}">
+                    <option value="1">🔴 High</option>
+                    <option value="2">🟠 Medium</option>
+                    <option value="3">🟢 Low</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Update Appointment</button>
+            <a href="/appointments" class="btn btn-danger" style="margin-left:10px;">Cancel</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

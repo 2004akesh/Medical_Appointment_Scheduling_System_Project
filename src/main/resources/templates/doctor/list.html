@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Doctor Management</title>
+  <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div class="navbar">
+  <a class="logo" href="/home/admin">🏥 HealthCare <span>Management System</span></a>
+  <nav>
+    <a href="/home/admin"><span>🏠</span> Home</a>
+    <a href="/patients"><span>👤</span> Patients</a>
+    <a href="/doctors" class="active"><span>🩺</span> Doctors</a>
+    <a href="/appointments"><span>📅</span> Appointments</a>
+    <a href="/scheduling"><span>🗓️</span> Scheduling</a>
+    <a href="/feedback"><span>💬</span> Feedback</a>
+    <a href="/admin"><span>⚙️</span> Admin</a>
+    <a href="/admin/requests"><span>🔔</span> Requests</a>
+    <a href="/logout" class="logout-btn"><span>🚪</span> Logout</a>
+  </nav>
+</div>
+<div class="main-content">
+  <div class="page-header">
+    <div><h1>Doctor Management</h1><p>Manage all registered doctors</p></div>
+    <a href="/doctors/add" class="btn btn-primary">+ Add New Doctor</a>
+  </div>
+  <div class="card">
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Phone</th><th>Specialization</th><th>Availability</th><th>Status</th><th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="doctor : ${doctors}">
+        <td><span class="badge badge-blue" th:text="${doctor.id}"></span></td>
+        <td th:text="${doctor.name}"></td>
+        <td th:text="${doctor.phone}"></td>
+        <td><span class="badge badge-green" th:text="${doctor.specialization}"></span></td>
+        <td><span class="badge badge-orange" th:text="${doctor.availability}"></span></td>
+        <td>
+                        <span class="badge"
+                              th:classappend="${doctor.status == 'Approved'} ? 'badge-green' : (${doctor.status == 'Pending'} ? 'badge-orange' : 'badge-red')"
+                              th:text="${doctor.status}"></span>
+        </td>
+        <td>
+          <a th:href="@{/doctors/edit/{id}(id=${doctor.id})}" class="btn btn-warning" style="padding:6px 14px; font-size:12px;">Edit</a>
+          <a th:href="@{/doctors/delete/{id}(id=${doctor.id})}" class="btn btn-danger" style="padding:6px 14px; font-size:12px;" onclick="return confirm('Are you sure?')">Delete</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

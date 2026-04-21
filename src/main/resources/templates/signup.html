@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up - HealthCare</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a2342, #1976d2);
+        }
+        .signup-box {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 420px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        .signup-box h1 { color: #0a2342; margin-bottom: 8px; }
+        .signup-box p { color: #888; margin-bottom: 30px; font-size: 14px; }
+        .role-card {
+            display: block;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .role-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+        .patient-card { background: #e3f2fd; color: #1976d2; }
+        .doctor-card { background: #e8f5e9; color: #2e7d32; }
+    </style>
+</head>
+<body>
+<div class="signup-box">
+    <h1>🏥 HealthCare</h1>
+    <p>Who are you signing up as?</p>
+    <a href="/signup/patient" class="role-card patient-card">👤 I am a Patient</a>
+    <a href="/signup/doctor" class="role-card doctor-card">🩺 I am a Doctor</a>
+    <br/>
+    <a href="/login" style="color:#888; font-size:13px;">← Back to Login</a>
+</div>
+</body>
+</html>

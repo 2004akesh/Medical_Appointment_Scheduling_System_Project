@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Patient</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div class="navbar">
+    <a class="logo" href="/home/admin">🏥 HealthCare <span>Management System</span></a>
+    <nav>
+        <a href="/home/admin"><span>🏠</span> Home</a>
+        <a href="/patients" class="active"><span>👤</span> Patients</a>
+        <a href="/doctors"><span>🩺</span> Doctors</a>
+        <a href="/appointments"><span>📅</span> Appointments</a>
+        <a href="/scheduling"><span>🗓️</span> Scheduling</a>
+        <a href="/feedback"><span>💬</span> Feedback</a>
+        <a href="/admin"><span>⚙️</span> Admin</a>
+        <a href="/admin/requests"><span>🔔</span> Requests</a>
+        <a href="/logout" class="logout-btn"><span>🚪</span> Logout</a>
+    </nav>
+</div>
+<div class="main-content">
+    <div class="page-header">
+        <div><h1>Edit Patient</h1><p>Update patient information</p></div>
+        <a href="/patients" class="btn btn-primary">← Back to List</a>
+    </div>
+    <div class="card" style="max-width: 600px;">
+        <form th:action="@{/patients/edit/{id}(id=${patient.id})}" th:object="${patient}" method="post">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" th:field="*{name}" required/>
+            </div>
+            <div class="form-group">
+                <label>Age</label>
+                <input type="number" th:field="*{age}" required/>
+            </div>
+            <div class="form-group">
+                <label>Gender</label>
+                <select th:field="*{gender}">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" th:field="*{phone}" required/>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" th:field="*{password}" required/>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select th:field="*{status}">
+                    <option value="Approved">Approved</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Update Patient</button>
+            <a href="/patients" class="btn btn-danger" style="margin-left:10px;">Cancel</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>
