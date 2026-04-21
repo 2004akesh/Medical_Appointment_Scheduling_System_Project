@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Schedule</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div class="navbar">
+    <a class="logo" href="#">🏥 HealthCare <span>Management System</span></a>
+    <nav>
+        <th:block th:if="${session.userRole == 'ADMIN'}">
+            <a href="/home/admin">🏠 Home</a>
+            <a href="/patients">👤 Patients</a>
+            <a href="/doctors">🩺 Doctors</a>
+            <a href="/appointments">📅 Appointments</a>
+            <a href="/scheduling" class="active">🗓️ Scheduling</a>
+            <a href="/feedback">💬 Feedback</a>
+            <a href="/admin">⚙️ Admin</a>
+            <a href="/admin/requests">🔔 Requests</a>
+        </th:block>
+        <th:block th:if="${session.userRole == 'DOCTOR'}">
+            <a href="/home/doctor">🏠 Home</a>
+            <a href="/appointments">📅 Appointments</a>
+            <a href="/scheduling" class="active">🗓️ Scheduling</a>
+            <a href="/feedback">💬 Feedback</a>
+        </th:block>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Edit Schedule</h1>
+            <p>Update your availability details</p>
+        </div>
+        <a href="/scheduling" class="btn btn-primary">← Back to List</a>
+    </div>
+
+    <div class="card" style="max-width: 600px;">
+        <form th:action="@{/scheduling/edit/{id}(id=${schedule.id})}"
+              th:object="${schedule}" method="post">
+
+            <div class="form-group">
+                <label>Doctor Name</label>
+                <input type="text" th:field="*{doctorName}"
+                       th:readonly="${session.userRole == 'DOCTOR'}"
+                       th:style="${session.userRole == 'DOCTOR'} ? 'background:#f5f5f5;' : ''"
+                       required/>
+            </div>
+
+            <div class="form-group">
+                <label>Available Days</label>
+                <select th:field="*{availableDays}">
+                    <option value="Weekdays (Mon - Fri)">Weekdays (Mon - Fri)</option>
+                    <option value="Weekends (Sat - Sun)">Weekends (Sat - Sun)</option>
+                    <option value="Both (Mon - Sun)">Both (Mon - Sun)</option>
+                    <option value="Monday Only">Monday Only</option>
+                    <option value="Tuesday Only">Tuesday Only</option>
+                    <option value="Wednesday Only">Wednesday Only</option>
+                    <option value="Thursday Only">Thursday Only</option>
+                    <option value="Friday Only">Friday Only</option>
+                    <option value="Saturday Only">Saturday Only</option>
+                    <option value="Sunday Only">Sunday Only</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Start Time</label>
+                <select th:field="*{startTime}">
+                    <option value="06:00 AM">06:00 AM</option>
+                    <option value="07:00 AM">07:00 AM</option>
+                    <option value="08:00 AM">08:00 AM</option>
+                    <option value="09:00 AM">09:00 AM</option>
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="01:00 PM">01:00 PM</option>
+                    <option value="02:00 PM">02:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="04:00 PM">04:00 PM</option>
+                    <option value="05:00 PM">05:00 PM</option>
+                    <option value="06:00 PM">06:00 PM</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>End Time</label>
+                <select th:field="*{endTime}">
+                    <option value="09:00 AM">09:00 AM</option>
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="12:00 PM">12:00 PM</option>
+                    <option value="01:00 PM">01:00 PM</option>
+                    <option value="02:00 PM">02:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="04:00 PM">04:00 PM</option>
+                    <option value="05:00 PM">05:00 PM</option>
+                    <option value="06:00 PM">06:00 PM</option>
+                    <option value="07:00 PM">07:00 PM</option>
+                    <option value="08:00 PM">08:00 PM</option>
+                    <option value="09:00 PM">09:00 PM</option>
+                    <option value="10:00 PM">10:00 PM</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Room Number</label>
+                <input type="text" th:field="*{roomNumber}" required/>
+            </div>
+
+            <div class="form-group">
+                <label>Max Patients Per Day</label>
+                <input type="number" th:field="*{maxPatients}" required/>
+            </div>
+
+            <div class="form-group">
+                <label>Current Patients Booked</label>
+                <input type="number" th:field="*{currentPatients}" required/>
+            </div>
+
+            <button type="submit" class="btn btn-success">Update Schedule</button>
+            <a href="/scheduling" class="btn btn-danger"
+               style="margin-left:10px;">Cancel</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Feedback Management</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div class="navbar">
+    <a class="logo" href="#">🏥 HealthCare <span>Management System</span></a>
+    <nav>
+        <th:block th:if="${session.userRole == 'ADMIN'}">
+            <a href="/home/admin">🏠 Home</a>
+            <a href="/patients">👤 Patients</a>
+            <a href="/doctors">🩺 Doctors</a>
+            <a href="/appointments">📅 Appointments</a>
+            <a href="/scheduling">🗓️ Scheduling</a>
+            <a href="/feedback" class="active">💬 Feedback</a>
+            <a href="/admin">⚙️ Admin</a>
+            <a href="/admin/requests">🔔 Requests</a>
+        </th:block>
+        <th:block th:if="${session.userRole == 'DOCTOR'}">
+            <a href="/home/doctor">🏠 Home</a>
+            <a href="/appointments">📅 Appointments</a>
+            <a href="/scheduling">🗓️ Scheduling</a>
+            <a href="/feedback" class="active">💬 Feedback</a>
+        </th:block>
+        <th:block th:if="${session.userRole == 'PATIENT'}">
+            <a href="/home/patient">🏠 Home</a>
+            <a href="/feedback" class="active">💬 Feedback</a>
+        </th:block>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Feedback Management</h1>
+            <p th:if="${session.userRole == 'DOCTOR'}">View patient feedback about doctors</p>
+            <p th:if="${session.userRole != 'DOCTOR'}">View and manage patient feedback</p>
+        </div>
+        <!-- Only Admin and Patient can add feedback -->
+        <a th:if="${session.userRole == 'ADMIN' or session.userRole == 'PATIENT'}"
+           href="/feedback/add" class="btn btn-primary">+ Add Feedback</a>
+    </div>
+
+    <!-- Info message for doctors -->
+    <div th:if="${session.userRole == 'DOCTOR'}"
+         style="background:#e3f2fd; border-left:5px solid #1976d2; border-radius:10px;
+                padding:15px 20px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+        <span style="font-size:24px;">ℹ️</span>
+        <p style="color:#1565c0; font-size:14px;">
+            You can view patient feedback here. Only patients can submit feedback.
+        </p>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Message</th>
+                <th>Rating</th>
+                <th>Date</th>
+                <!-- Only show Actions column for Admin and Patient -->
+                <th th:if="${session.userRole != 'DOCTOR'}">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="f : ${feedbacks}">
+                <td><span class="badge badge-blue" th:text="${f.id}"></span></td>
+                <td th:text="${f.patientName}"></td>
+                <td th:text="${f.doctorName}"></td>
+                <td th:text="${f.message}"></td>
+                <td>
+                        <span class="badge"
+                              th:classappend="${f.rating >= 4} ? 'badge-green' : (${f.rating == 3} ? 'badge-orange' : 'badge-red')"
+                              th:text="${f.rating} + ' ⭐'"></span>
+                </td>
+                <td th:text="${f.date}"></td>
+                <!-- Only show Edit/Delete for Admin and Patient -->
+                <td th:if="${session.userRole != 'DOCTOR'}">
+                    <a th:href="@{/feedback/edit/{id}(id=${f.id})}"
+                       class="btn btn-warning"
+                       style="padding:6px 14px; font-size:12px;">Edit</a>
+                    <a th:href="@{/feedback/delete/{id}(id=${f.id})}"
+                       class="btn btn-danger"
+                       style="padding:6px 14px; font-size:12px;"
+                       onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(feedbacks)}">
+                <td colspan="7" style="text-align:center; color:#888; padding:30px;">
+                    <div style="font-size:40px; margin-bottom:10px;">💬</div>
+                    No feedback found yet
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

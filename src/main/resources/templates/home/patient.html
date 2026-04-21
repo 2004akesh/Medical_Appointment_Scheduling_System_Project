@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Patient Portal - HealthCare</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; }
+
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; height: 65px;
+            background: linear-gradient(135deg, #0a2342, #1976d2);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+        }
+        .navbar .logo {
+            display: flex; align-items: center; gap: 10px;
+            color: white; font-size: 20px; font-weight: 700; text-decoration: none;
+        }
+        .navbar .logo span { font-size: 13px; color: rgba(255,255,255,0.6); font-weight: 400; }
+        .navbar nav { display: flex; align-items: center; gap: 5px; }
+        .navbar nav a {
+            color: rgba(255,255,255,0.85); text-decoration: none;
+            padding: 8px 16px; border-radius: 8px; font-size: 13px;
+            font-weight: 500; transition: all 0.3s ease;
+        }
+        .navbar nav a:hover { background: rgba(255,255,255,0.15); color: white; }
+        .navbar nav a.book-btn { background: #4fc3f7; color: #0a2342; font-weight: 700; }
+        .navbar nav a.book-btn:hover { background: white; transform: translateY(-2px); }
+        .navbar nav a.logout-btn { background: rgba(229,57,53,0.2); color: #ff6b6b; }
+        .navbar nav a.logout-btn:hover { background: rgba(229,57,53,0.4); }
+
+        .hero {
+            margin-top: 65px; height: 580px;
+            background: linear-gradient(rgba(10,35,66,0.7), rgba(25,118,210,0.6)),
+            url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1600&q=80') center/cover no-repeat;
+            display: flex; align-items: center; padding: 0 80px;
+        }
+        .hero-content { max-width: 580px; animation: fadeIn 0.8s ease; }
+        .hero-content h1 { font-size: 52px; color: white; font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
+        .hero-content h1 span { color: #4fc3f7; }
+        .hero-content p { font-size: 17px; color: rgba(255,255,255,0.85); margin-bottom: 35px; line-height: 1.7; }
+        .hero-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+        .hero-btn-primary {
+            background: #4fc3f7; color: #0a2342; padding: 14px 32px;
+            border-radius: 50px; text-decoration: none; font-weight: 700;
+            font-size: 15px; transition: all 0.3s ease;
+        }
+        .hero-btn-primary:hover { background: white; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .hero-btn-secondary {
+            background: rgba(255,255,255,0.15); color: white; padding: 14px 32px;
+            border-radius: 50px; text-decoration: none; font-weight: 600;
+            font-size: 15px; border: 2px solid rgba(255,255,255,0.4); transition: all 0.3s ease;
+        }
+        .hero-btn-secondary:hover { background: rgba(255,255,255,0.25); transform: translateY(-3px); }
+
+        .stats-bar {
+            background: white; display: flex; justify-content: space-around;
+            padding: 30px 80px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        .stat-item { text-align: center; flex: 1; }
+        .stat-item h3 { font-size: 36px; color: #1976d2; font-weight: 800; }
+        .stat-item p { color: #888; font-size: 13px; margin-top: 6px; }
+
+        .services { padding: 70px 80px; }
+        .section-title { text-align: center; font-size: 32px; color: #0a2342; font-weight: 800; margin-bottom: 10px; }
+        .section-subtitle { text-align: center; color: #888; font-size: 15px; margin-bottom: 45px; }
+        .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .service-card {
+            background: white; border-radius: 16px; padding: 35px 25px;
+            text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            transition: all 0.3s ease; border-bottom: 4px solid transparent;
+        }
+        .service-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.12); border-bottom: 4px solid #1976d2; }
+        .service-icon { font-size: 50px; margin-bottom: 15px; }
+        .service-card h3 { font-size: 18px; color: #0a2342; font-weight: 700; margin-bottom: 10px; }
+        .service-card p { color: #888; font-size: 13px; line-height: 1.6; }
+
+        .book-section { padding: 0 80px 70px; }
+        .book-inner {
+            background: linear-gradient(135deg, #0a2342, #1976d2);
+            border-radius: 24px; padding: 50px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start;
+        }
+        .book-left h2 { color: white; font-size: 30px; font-weight: 800; margin-bottom: 15px; }
+        .book-left p { color: rgba(255,255,255,0.75); font-size: 15px; line-height: 1.7; margin-bottom: 20px; }
+        .book-feature { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.85); font-size: 14px; margin-bottom: 12px; }
+        .book-feature-icon { background: rgba(255,255,255,0.15); padding: 8px; border-radius: 8px; font-size: 16px; }
+        .book-form { background: white; border-radius: 16px; padding: 35px; }
+        .book-form-group { margin-bottom: 18px; }
+        .book-form-group label { display: block; font-size: 13px; font-weight: 600; color: #0a2342; margin-bottom: 6px; }
+        .book-form-group select,
+        .book-form-group input {
+            width: 100%; padding: 11px 15px; border: 2px solid #e0e0e0;
+            border-radius: 8px; font-size: 14px; outline: none; transition: border 0.3s ease;
+        }
+        .book-form-group select:focus,
+        .book-form-group input:focus { border-color: #1976d2; }
+        .book-submit {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #1976d2, #0a2342);
+            color: white; border: none; border-radius: 10px;
+            font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.3s ease;
+        }
+        .book-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(25,118,210,0.4); }
+
+        .availability-box {
+            background: #e3f2fd; border-radius: 8px;
+            padding: 12px; margin-bottom: 18px;
+        }
+        .availability-box p { font-size: 12px; color: #1565c0; font-weight: 600; margin-bottom: 8px; }
+        .availability-item {
+            font-size: 12px; color: #444; margin-bottom: 5px;
+            padding: 8px; background: white; border-radius: 6px;
+        }
+        .availability-item strong { color: #0a2342; }
+
+        .appointments-section { padding: 0 80px 70px; }
+        .appt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .appt-header h2 { font-size: 28px; color: #0a2342; font-weight: 800; }
+        .appt-header span { color: #888; font-size: 13px; }
+        .appt-card {
+            background: white; border-radius: 16px; padding: 20px 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07); margin-bottom: 15px;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: all 0.3s ease; animation: fadeIn 0.5s ease;
+        }
+        .appt-card:hover { transform: translateX(5px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .appt-info { display: flex; align-items: center; gap: 20px; }
+        .appt-icon {
+            width: 55px; height: 55px;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 14px; display: flex;
+            align-items: center; justify-content: center; font-size: 24px;
+        }
+        .appt-details h4 { color: #0a2342; font-size: 16px; font-weight: 700; }
+        .appt-details p { color: #888; font-size: 13px; margin-top: 3px; }
+        .appt-badges { display: flex; gap: 10px; align-items: center; }
+        .badge { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-green { background: #e8f5e9; color: #2e7d32; }
+        .badge-orange { background: #fff3e0; color: #e65100; }
+        .badge-red { background: #ffebee; color: #c62828; }
+        .badge-blue { background: #e3f2fd; color: #1565c0; }
+        .empty-state {
+            text-align: center; padding: 50px; background: white;
+            border-radius: 16px; color: #aaa; box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+        .empty-state div { font-size: 60px; margin-bottom: 10px; }
+        .empty-state p { font-size: 15px; }
+
+        .footer { background: #0a2342; color: rgba(255,255,255,0.6); text-align: center; padding: 25px; font-size: 13px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <a class="logo" href="/home/patient">🏥 HealthCare <span>Patient Portal</span></a>
+    <nav>
+        <a href="/home/patient">🏠 Home</a>
+        <a href="#book-section" class="book-btn">📅 Book Appointment</a>
+        <a href="/feedback">💬 Feedback</a>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </nav>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-content">
+        <h1>Medical Services<br/>You Can <span>Trust</span></h1>
+        <p>Welcome back, <strong th:text="${userName}" style="color:#4fc3f7;"></strong>!
+            Book appointments with our qualified doctors easily and get the care you deserve.</p>
+        <div class="hero-buttons">
+            <a href="#book-section" class="hero-btn-primary">📅 Book Appointment</a>
+            <a href="#appointments-section" class="hero-btn-secondary">📋 My Appointments</a>
+        </div>
+    </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <h3>50+</h3>
+        <p>Qualified Doctors</p>
+    </div>
+    <div class="stat-item">
+        <h3>24/7</h3>
+        <p>Emergency Services</p>
+    </div>
+    <div class="stat-item">
+        <h3>100%</h3>
+        <p>Patient Satisfaction</p>
+    </div>
+    <div class="stat-item">
+        <h3>10+</h3>
+        <p>Specializations</p>
+    </div>
+</div>
+
+<!-- SERVICES -->
+<div class="services">
+    <h2 class="section-title">Welcome to Our Clinic</h2>
+    <p class="section-subtitle">We provide the best healthcare services for you and your family</p>
+    <div class="services-grid">
+        <div class="service-card">
+            <div class="service-icon">🚑</div>
+            <h3>Emergency Services</h3>
+            <p>24/7 emergency care available for critical medical situations</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">🩺</div>
+            <h3>Qualified Doctors</h3>
+            <p>Our team of expert doctors provide the best personalized care</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">💊</div>
+            <h3>Modern Treatment</h3>
+            <p>Latest medical technology and treatments for all conditions</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">🏥</div>
+            <h3>Quality Care</h3>
+            <p>World class facilities and compassionate healthcare services</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">🔬</div>
+            <h3>Lab Services</h3>
+            <p>Advanced laboratory testing and diagnostic services available</p>
+        </div>
+        <div class="service-card">
+            <div class="service-icon">❤️</div>
+            <h3>Patient Support</h3>
+            <p>Dedicated support team to help you through your health journey</p>
+        </div>
+    </div>
+</div>
+
+<!-- BOOK APPOINTMENT -->
+<div id="book-section" class="book-section">
+    <div class="book-inner">
+        <div class="book-left">
+            <h2>📅 Book an Appointment</h2>
+            <p>Select your preferred doctor, date and time. Check doctor availability below before booking!</p>
+            <div class="book-feature">
+                <span class="book-feature-icon">✅</span>
+                Choose from our qualified doctors
+            </div>
+            <div class="book-feature">
+                <span class="book-feature-icon">✅</span>
+                Check doctor availability first
+            </div>
+            <div class="book-feature">
+                <span class="book-feature-icon">✅</span>
+                Pick a time within their hours
+            </div>
+            <div class="book-feature">
+                <span class="book-feature-icon">✅</span>
+                Set urgency for priority care
+            </div>
+        </div>
+        <div class="book-form">
+            <form action="/appointments/book" method="post">
+                <input type="hidden" name="patientName" th:value="${userName}"/>
+
+                <div class="book-form-group">
+                    <label>Select Doctor</label>
+                    <select name="doctorName" required>
+                        <option value="">-- Select a Doctor --</option>
+                        <option th:each="doctor : ${doctors}"
+                                th:value="${doctor.name}"
+                                th:text="${doctor.name} + ' - ' + ${doctor.specialization}">
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Doctor Availability Info -->
+                <div style="margin-bottom: 18px;">
+                    <label style="display:block; font-size:13px; font-weight:600; color:#0a2342; margin-bottom:8px;">
+                        📋 Doctor Availability Information
+                    </label>
+                    <div th:each="s : ${availableSchedules}"
+                         style="background: #f8f9fa; border: 2px solid #e3f2fd; border-left: 5px solid #1976d2;
+                border-radius: 10px; padding: 12px 15px; margin-bottom: 8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                            <div>
+                                <p style="font-size:14px; font-weight:700; color:#0a2342; margin-bottom:4px;">
+                                    🩺 <span th:text="${s.doctorName}"></span>
+                                </p>
+                                <p style="font-size:12px; color:#555; margin-bottom:2px;">
+                                    📅 <span th:text="${s.availableDays}"></span>
+                                </p>
+                                <p style="font-size:12px; color:#555; margin-bottom:2px;">
+                                    ⏰ <span th:text="${s.startTime} + ' — ' + ${s.endTime}"></span>
+                                </p>
+                                <p style="font-size:12px; color:#555;">
+                                    🚪 Room: <span th:text="${s.roomNumber}"></span>
+                                </p>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="background:#e8f5e9; border-radius:10px; padding:10px 15px;">
+                                    <p style="font-size:22px; font-weight:800; color:#2e7d32;"
+                                       th:text="${s.maxPatients - s.currentPatients}"></p>
+                                    <p style="font-size:11px; color:#555;">slots left</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${#lists.isEmpty(availableSchedules)}"
+                         style="background:#fff3e0; border-radius:10px; padding:12px; text-align:center; color:#e65100; font-size:13px;">
+                        ⚠️ No doctor schedules available yet. Please check back later.
+                    </div>
+                </div>
+
+                <div class="book-form-group">
+                    <label>Date</label>
+                    <input type="date" name="date" required/>
+                </div>
+
+                <div class="book-form-group">
+                    <label>Time Slot</label>
+                    <select name="timeSlot">
+                        <option value="06:00 AM">06:00 AM</option>
+                        <option value="07:00 AM">07:00 AM</option>
+                        <option value="08:00 AM">08:00 AM</option>
+                        <option value="09:00 AM">09:00 AM</option>
+                        <option value="10:00 AM">10:00 AM</option>
+                        <option value="11:00 AM">11:00 AM</option>
+                        <option value="12:00 PM">12:00 PM</option>
+                        <option value="01:00 PM">01:00 PM</option>
+                        <option value="02:00 PM">02:00 PM</option>
+                        <option value="03:00 PM">03:00 PM</option>
+                        <option value="04:00 PM">04:00 PM</option>
+                        <option value="05:00 PM">05:00 PM</option>
+                    </select>
+                </div>
+
+                <div class="book-form-group">
+                    <label>Urgency Level</label>
+                    <select name="urgency">
+                        <option value="1">🔴 High</option>
+                        <option value="2">🟠 Medium</option>
+                        <option value="3">🟢 Low</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="book-submit">📅 Book Appointment</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MY APPOINTMENTS -->
+<div id="appointments-section" class="appointments-section">
+    <div class="appt-header">
+        <h2>📋 My Appointments</h2>
+        <span th:text="${#lists.size(myAppointments)} + ' appointment(s) found'"></span>
+    </div>
+
+    <div th:if="${#lists.isEmpty(myAppointments)}" class="empty-state">
+        <div>📭</div>
+        <p>No appointments yet. Book your first appointment above!</p>
+    </div>
+
+    <div th:each="a : ${myAppointments}" class="appt-card">
+        <div class="appt-info">
+            <div class="appt-icon">🩺</div>
+            <div class="appt-details">
+                <h4 th:text="'Dr. ' + ${a.doctorName}"></h4>
+                <p th:text="${a.date} + ' at ' + ${a.timeSlot}"></p>
+            </div>
+        </div>
+        <div class="appt-badges">
+            <span class="badge"
+                  th:classappend="${a.status == 'Confirmed'} ? 'badge-green' : (${a.status == 'Pending'} ? 'badge-orange' : 'badge-red')"
+                  th:text="${a.status}"></span>
+            <span class="badge"
+                  th:classappend="${a.urgency == 1} ? 'badge-red' : (${a.urgency == 2} ? 'badge-orange' : 'badge-green')"
+                  th:text="${a.urgency == 1} ? '🔴 High' : (${a.urgency == 2} ? '🟠 Medium' : '🟢 Low')"></span>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    © 2026 HealthCare Management System. All rights reserved. ❤️
+</div>
+
+</body>
+</html>

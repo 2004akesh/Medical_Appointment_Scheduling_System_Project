@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>HealthCare - Welcome</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a2342, #1976d2);
+        }
+        .welcome-box {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 480px;
+            animation: fadeIn 0.5s ease;
+        }
+        .welcome-box h1 {
+            color: #0a2342;
+            margin-bottom: 5px;
+            text-align: center;
+            font-size: 28px;
+        }
+        .welcome-box p {
+            color: #888;
+            margin-bottom: 35px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .role-section {
+            border: 2px solid #f0f4f8;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .role-section:hover {
+            border-color: #1976d2;
+            box-shadow: 0 4px 15px rgba(25,118,210,0.1);
+        }
+        .role-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0a2342;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .role-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .role-buttons a {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-login-admin {
+            background: #e8eaf6;
+            color: #283593;
+        }
+        .btn-login-admin:hover {
+            background: #283593;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .btn-login-doctor {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .btn-login-doctor:hover {
+            background: #2e7d32;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .btn-signup-doctor {
+            background: #f1f8e9;
+            color: #558b2f;
+            border: 2px dashed #558b2f;
+        }
+        .btn-signup-doctor:hover {
+            background: #558b2f;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .btn-login-patient {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        .btn-login-patient:hover {
+            background: #1565c0;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .btn-signup-patient {
+            background: #e8f4fd;
+            color: #1976d2;
+            border: 2px dashed #1976d2;
+        }
+        .btn-signup-patient:hover {
+            background: #1976d2;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .admin-note {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="welcome-box">
+    <h1>🏥 HealthCare</h1>
+    <p>Management System — Welcome! Please select your role</p>
+
+    <!-- Admin Section -->
+    <div class="role-section">
+        <div class="role-title">⚙️ Admin</div>
+        <div class="role-buttons">
+            <a href="/login/admin" class="btn-login-admin">🔑 Login</a>
+        </div>
+        <p class="admin-note">* Admin accounts are created by the system only</p>
+    </div>
+
+    <!-- Doctor Section -->
+    <div class="role-section">
+        <div class="role-title">🩺 Doctor</div>
+        <div class="role-buttons">
+            <a href="/login/doctor" class="btn-login-doctor">🔑 Login</a>
+            <a href="/signup/doctor" class="btn-signup-doctor">📝 Sign Up</a>
+        </div>
+    </div>
+
+    <!-- Patient Section -->
+    <div class="role-section">
+        <div class="role-title">👤 Patient</div>
+        <div class="role-buttons">
+            <a href="/login/patient" class="btn-login-patient">🔑 Login</a>
+            <a href="/signup/patient" class="btn-signup-patient">📝 Sign Up</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

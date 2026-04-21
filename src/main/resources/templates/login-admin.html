@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Login</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #0a2342, #283593); }
+        .login-box { background: white; padding: 50px 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 420px; animation: fadeIn 0.5s ease; }
+        .login-box h1 { color: #283593; margin-bottom: 8px; text-align: center; }
+        .login-box p { color: #888; margin-bottom: 30px; font-size: 14px; text-align: center; }
+        .error-msg { background: #ffebee; color: #c62828; padding: 10px 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; text-align: center; }
+    </style>
+</head>
+<body>
+<div class="login-box">
+    <h1>⚙️ Admin Login</h1>
+    <p>Enter your admin credentials</p>
+    <div class="error-msg" th:if="${error}" th:text="${error}"></div>
+    <form action="/login" method="post">
+        <input type="hidden" name="role" value="ADMIN"/>
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Enter admin username" required/>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password" required/>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:13px;">Login</button>
+    </form>
+    <br/>
+    <a href="/login" style="display:block; text-align:center; color:#888; font-size:13px;">← Back to role selection</a>
+</div>
+</body>
+</html>

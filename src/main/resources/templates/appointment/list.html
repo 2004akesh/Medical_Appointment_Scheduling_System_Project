@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Appointment Management</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div class="navbar">
+    <a class="logo" href="#">🏥 HealthCare <span>Management System</span></a>
+    <nav>
+        <th:block th:if="${session.userRole == 'ADMIN'}">
+            <a href="/home/admin">🏠 Home</a>
+            <a href="/patients">👤 Patients</a>
+            <a href="/doctors">🩺 Doctors</a>
+            <a href="/appointments" class="active">📅 Appointments</a>
+            <a href="/scheduling">🗓️ Scheduling</a>
+            <a href="/feedback">💬 Feedback</a>
+            <a href="/admin">⚙️ Admin</a>
+            <a href="/admin/requests">🔔 Requests</a>
+        </th:block>
+        <th:block th:if="${session.userRole == 'DOCTOR'}">
+            <a href="/home/doctor">🏠 Home</a>
+            <a href="/appointments" class="active">📅 Appointments</a>
+            <a href="/scheduling">🗓️ Scheduling</a>
+            <a href="/feedback">💬 Feedback</a>
+        </th:block>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
+    </nav>
+</div>
+
+<div class="main-content">
+    <div class="page-header">
+        <div>
+            <h1>Appointment Management</h1>
+            <p>Manage and sort all patient appointments</p>
+        </div>
+        <a href="/appointments/add" class="btn btn-primary">+ Add Appointment</a>
+    </div>
+
+    <!-- SORT BUTTONS -->
+    <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/appointments" class="btn btn-warning">
+            📋 Default View
+        </a>
+        <a href="/appointments/sort-by-priority" class="btn btn-primary">
+            🔺 Sort by Urgency (Priority Queue)
+        </a>
+        <a href="/appointments/sort-by-time" class="btn btn-success">
+            🕐 Sort by Time Slot (Bubble Sort)
+        </a>
+    </div>
+
+    <!-- SORT LABEL -->
+    <div style="margin-bottom: 15px;">
+        <span class="badge badge-blue" th:if="${sortType == 'default'}">
+            📋 Default View — All Appointments
+        </span>
+        <span class="badge badge-red" th:if="${sortType == 'priority'}">
+            🔺 Sorted by: Urgency (Priority Queue) — High urgency patients first!
+        </span>
+        <span class="badge badge-green" th:if="${sortType == 'time'}">
+            🕐 Sorted by: Time Slot (Bubble Sort) — Earliest appointments first!
+        </span>
+    </div>
+
+    <div class="card">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+                <th>Time Slot</th>
+                <th>Status</th>
+                <th>Urgency</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="a : ${appointments}">
+                <td><span class="badge badge-blue" th:text="${a.id}"></span></td>
+                <td th:text="${a.patientName}"></td>
+                <td th:text="${a.doctorName}"></td>
+                <td th:text="${a.date}"></td>
+                <td th:text="${a.timeSlot}"></td>
+                <td>
+                        <span class="badge"
+                              th:classappend="${a.status == 'Confirmed'} ? 'badge-green' : (${a.status == 'Pending'} ? 'badge-orange' : 'badge-red')"
+                              th:text="${a.status}"></span>
+                </td>
+                <td>
+                        <span class="badge"
+                              th:classappend="${a.urgency == 1} ? 'badge-red' : (${a.urgency == 2} ? 'badge-orange' : 'badge-green')"
+                              th:text="${a.urgency == 1} ? '🔴 High' : (${a.urgency == 2} ? '🟠 Medium' : '🟢 Low')"></span>
+                </td>
+                <td>
+                    <a th:href="@{/appointments/edit/{id}(id=${a.id})}"
+                       class="btn btn-warning" style="padding:6px 14px; font-size:12px;">Edit</a>
+                    <a th:href="@{/appointments/delete/{id}(id=${a.id})}"
+                       class="btn btn-danger" style="padding:6px 14px; font-size:12px;"
+                       onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(appointments)}">
+                <td colspan="8" style="text-align:center; color:#888; padding:30px;">
+                    No appointments found
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

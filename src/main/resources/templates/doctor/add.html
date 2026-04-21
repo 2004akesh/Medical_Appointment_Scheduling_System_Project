@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Doctor</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div class="navbar">
+    <a class="logo" href="/home/admin">🏥 HealthCare <span>Management System</span></a>
+    <nav>
+        <a href="/home/admin"><span>🏠</span> Home</a>
+        <a href="/patients"><span>👤</span> Patients</a>
+        <a href="/doctors" class="active"><span>🩺</span> Doctors</a>
+        <a href="/appointments"><span>📅</span> Appointments</a>
+        <a href="/scheduling"><span>🗓️</span> Scheduling</a>
+        <a href="/feedback"><span>💬</span> Feedback</a>
+        <a href="/admin"><span>⚙️</span> Admin</a>
+        <a href="/admin/requests"><span>🔔</span> Requests</a>
+        <a href="/logout" class="logout-btn"><span>🚪</span> Logout</a>
+    </nav>
+</div>
+<div class="main-content">
+    <div class="page-header">
+        <div><h1>Add New Doctor</h1><p>Fill in the details below</p></div>
+        <a href="/doctors" class="btn btn-primary">← Back to List</a>
+    </div>
+    <div class="card" style="max-width: 600px;">
+        <form th:action="@{/doctors/add}" th:object="${doctor}" method="post">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" th:field="*{name}" placeholder="Enter doctor name" required/>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" th:field="*{phone}" placeholder="Enter phone number" required/>
+            </div>
+            <div class="form-group">
+                <label>Specialization</label>
+                <select th:field="*{specialization}">
+                    <option value="Cardiologist">Cardiologist</option>
+                    <option value="Dermatologist">Dermatologist</option>
+                    <option value="Neurologist">Neurologist</option>
+                    <option value="Pediatrician">Pediatrician</option>
+                    <option value="Surgeon">Surgeon</option>
+                    <option value="General Practitioner">General Practitioner</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Availability</label>
+                <select th:field="*{availability}">
+                    <option value="Monday - Friday">Monday - Friday</option>
+                    <option value="Monday - Saturday">Monday - Saturday</option>
+                    <option value="Weekends Only">Weekends Only</option>
+                    <option value="On Call">On Call</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" th:field="*{password}" placeholder="Set a password" required/>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select th:field="*{status}">
+                    <option value="Approved">Approved</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Rejected">Rejected</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">Add Doctor</button>
+            <a href="/doctors" class="btn btn-danger" style="margin-left:10px;">Cancel</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>
