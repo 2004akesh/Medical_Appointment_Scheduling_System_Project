@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pending Requests</title>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+</head>
+<body>
+<div class="navbar">
+    <a class="logo" href="/home/admin">🏥 HealthCare <span>Management System</span></a>
+    <nav>
+        <a href="/home/admin"><span>🏠</span> Home</a>
+        <a href="/patients"><span>👤</span> Patients</a>
+        <a href="/doctors"><span>🩺</span> Doctors</a>
+        <a href="/appointments"><span>📅</span> Appointments</a>
+        <a href="/scheduling"><span>🗓️</span> Scheduling</a>
+        <a href="/feedback"><span>💬</span> Feedback</a>
+        <a href="/admin"><span>⚙️</span> Admin</a>
+        <a href="/admin/requests" class="active"><span>🔔</span> Requests</a>
+        <a href="/logout" class="logout-btn"><span>🚪</span> Logout</a>
+    </nav>
+</div>
+<div class="main-content">
+    <div class="page-header">
+        <div><h1>Pending Requests 🔔</h1><p>Approve or reject doctor and patient registrations</p></div>
+    </div>
+    <div class="card" style="margin-bottom: 30px;">
+        <h3 style="color:#0a2342; margin-bottom:15px;">🩺 Pending Doctor Requests</h3>
+        <table>
+            <thead>
+            <tr><th>Name</th><th>Phone</th><th>Specialization</th><th>Availability</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="d : ${pendingDoctors}">
+                <td th:text="${d.name}"></td>
+                <td th:text="${d.phone}"></td>
+                <td><span class="badge badge-blue" th:text="${d.specialization}"></span></td>
+                <td th:text="${d.availability}"></td>
+                <td>
+                    <a th:href="@{/admin/approve/doctor/{id}(id=${d.id})}" class="btn btn-success" style="padding:6px 14px; font-size:12px;">✅ Approve</a>
+                    <a th:href="@{/admin/reject/doctor/{id}(id=${d.id})}" class="btn btn-danger" style="padding:6px 14px; font-size:12px;">❌ Reject</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(pendingDoctors)}">
+                <td colspan="5" style="text-align:center; color:#888;">No pending doctor requests</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card">
+        <h3 style="color:#0a2342; margin-bottom:15px;">👤 Pending Patient Requests</h3>
+        <table>
+            <thead>
+            <tr><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${pendingPatients}">
+                <td th:text="${p.name}"></td>
+                <td th:text="${p.age}"></td>
+                <td th:text="${p.gender}"></td>
+                <td th:text="${p.phone}"></td>
+                <td>
+                    <a th:href="@{/admin/approve/patient/{id}(id=${p.id})}" class="btn btn-success" style="padding:6px 14px; font-size:12px;">✅ Approve</a>
+                    <a th:href="@{/admin/reject/patient/{id}(id=${p.id})}" class="btn btn-danger" style="padding:6px 14px; font-size:12px;">❌ Reject</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(pendingPatients)}">
+                <td colspan="5" style="text-align:center; color:#888;">No pending patient requests</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
