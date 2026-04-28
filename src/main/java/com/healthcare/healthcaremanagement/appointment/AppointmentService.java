@@ -10,10 +10,7 @@ public class AppointmentService implements ManagementService<Appointment> {
 
     private static final String FILE_PATH = "src/main/resources/data/appointments.txt";
 
-    // =============================================
-    // PRIORITY QUEUE - Sort appointments by urgency
-    // 1=High comes first, 3=Low comes last
-    // =============================================
+
     public List<Appointment> getAppointmentsByPriority() {
         PriorityQueue<Appointment> priorityQueue = new PriorityQueue<>(
                 Comparator.comparingInt(Appointment::getUrgency)
@@ -26,10 +23,6 @@ public class AppointmentService implements ManagementService<Appointment> {
         return sorted;
     }
 
-    // =============================================
-    // BUBBLE SORT - Sort appointments by time slot
-    // Earliest time slot comes first
-    // =============================================
     public List<Appointment> getAppointmentsSortedByTime() {
         List<Appointment> list = getAll();
         int n = list.size();
