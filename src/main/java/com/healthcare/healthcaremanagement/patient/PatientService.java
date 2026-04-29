@@ -14,10 +14,12 @@ public class PatientService implements ManagementService<Patient> {
     @Override
     public List<Patient> getAll() {
         List<Patient> patients = new ArrayList<>();
+        // Reading from the text file instead of a DB
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] p = line.split(",");
+                // Checking length to avoid ArrayOutOfBounds exceptions
                 if (p.length == 7) {
                     patients.add(new Patient(p[0], p[1], Integer.parseInt(p[2]),
                             p[3], p[4], p[5], p[6]));
