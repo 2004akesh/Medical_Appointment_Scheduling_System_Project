@@ -7,7 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/patients")
+@RequestMapping("/patients") // Base URL for all patient-related pages
 public class PatientController {
 
     @Autowired
