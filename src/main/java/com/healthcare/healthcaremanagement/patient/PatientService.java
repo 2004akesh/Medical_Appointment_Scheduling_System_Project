@@ -25,13 +25,14 @@ public class PatientService implements ManagementService<Patient> {
                             p[3], p[4], p[5], p[6]));
                 }
             }
-        } catch (IOException e) {}
+        } catch (IOException e) {} // Ignoring the error for now if file is empty/missing
         return patients;
     }
 
     @Override
     public void save(Patient patient) {
         List<Patient> patients = getAll();
+        // Generating a random 8-character ID (saw this UUID trick online, pretty neat)
         patient.setId(UUID.randomUUID().toString().substring(0, 8));
         patients.add(patient);
         writeAll(patients);
@@ -40,6 +41,7 @@ public class PatientService implements ManagementService<Patient> {
     @Override
     public void update(String id, Patient updated) {
         List<Patient> patients = getAll();
+        // Looping through to find the right patient to update
         for (Patient p : patients) {
             if (p.getId().equals(id)) {
                 p.setName(updated.getName());
@@ -50,7 +52,7 @@ public class PatientService implements ManagementService<Patient> {
                 p.setStatus(updated.getStatus());
             }
         }
-        writeAll(patients);
+        writeAll(patients); // Overwrite the file with the new data
     }
 
     @Override
