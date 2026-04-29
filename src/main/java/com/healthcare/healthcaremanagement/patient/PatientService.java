@@ -58,12 +58,14 @@ public class PatientService implements ManagementService<Patient> {
     @Override
     public void delete(String id) {
         List<Patient> patients = getAll();
+        // Using removeIf here to keep it short
         patients.removeIf(p -> p.getId().equals(id));
         writeAll(patients);
     }
 
     @Override
     public Patient getById(String id) {
+        // Using Java streams here instead of a bulky for-loop to find the first match
         return getAll().stream()
                 .filter(p -> p.getId().equals(id))
                 .findFirst().orElse(null);
