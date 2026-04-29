@@ -25,6 +25,7 @@ public class PatientController {
     public String showAddForm(HttpSession session, Model model) {
         // Need to make sure only admins can add patients too
         if (!"ADMIN".equals(session.getAttribute("userRole"))) return "redirect:/login";
+        // Passing an empty object for the form to use
         model.addAttribute("patient", new Patient());
         return "patient/add";
     }
@@ -33,12 +34,13 @@ public class PatientController {
     public String addPatient(HttpSession session, @ModelAttribute Patient patient) {
         if (!"ADMIN".equals(session.getAttribute("userRole"))) return "redirect:/login";
         patientService.savePatient(patient);
-        return "redirect:/patients";
+        return "redirect:/patients";// Redirects to the main list after saving
     }
 
     @GetMapping("/edit/{id}")
     public String showEditForm(HttpSession session, @PathVariable String id, Model model) {
         if (!"ADMIN".equals(session.getAttribute("userRole"))) return "redirect:/login";
+        // Grabbing the specific patient by the ID passed in the URL
         model.addAttribute("patient", patientService.getPatientById(id));
         return "patient/edit";
     }
@@ -52,6 +54,7 @@ public class PatientController {
 
     @GetMapping("/delete/{id}")
     public String deletePatient(HttpSession session, @PathVariable String id) {
+        // Delete request based on the ID path variable
         if (!"ADMIN".equals(session.getAttribute("userRole"))) return "redirect:/login";
         patientService.deletePatient(id);
         return "redirect:/patients";
