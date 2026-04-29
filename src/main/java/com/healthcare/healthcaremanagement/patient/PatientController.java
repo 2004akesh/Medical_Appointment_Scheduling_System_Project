@@ -15,6 +15,7 @@ public class PatientController {
 
     @GetMapping
     public String listPatients(HttpSession session, Model model) {
+        // Basic security check - kicking non-admins back to the login page
         if (!"ADMIN".equals(session.getAttribute("userRole"))) return "redirect:/login";
         model.addAttribute("patients", patientService.getAllPatients());
         return "patient/list";
