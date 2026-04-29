@@ -40,6 +40,6 @@ public class Patient extends Person {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
-    @Override  //polymorphism
+    @Override  //runtime polymorphism
     public String getRole() { return "Patient"; }
 }
