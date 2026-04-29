@@ -23,6 +23,7 @@ public class PatientController {
 
     @GetMapping("/add")
     public String showAddForm(HttpSession session, Model model) {
+        // Need to make sure only admins can add patients too
         if (!"ADMIN".equals(session.getAttribute("userRole"))) return "redirect:/login";
         model.addAttribute("patient", new Patient());
         return "patient/add";
