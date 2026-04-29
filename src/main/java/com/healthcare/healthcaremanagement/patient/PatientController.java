@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/patients") // Base URL for all patient-related pages
 public class PatientController {
 
-    @Autowired
+    @Autowired // Auto-links the service class so we don't have to instantiate it manually
     private PatientService patientService;
 
     @GetMapping
