@@ -8,6 +8,7 @@ import java.util.*;
 @Service
 public class PatientService implements ManagementService<Patient> {
 
+    // Using a relative path so it works on everyone's PC, not just mine
     private static final String FILE_PATH = "src/main/resources/data/patients.txt";
 
     @Override
