@@ -25,57 +25,39 @@ public class LoginController {
     @GetMapping("/login")
     public String loginPage() { return "login"; }
 
-    @GetMapping("/login/admin")
-    public String adminLoginPage() { return "login-admin"; }
-
-    @GetMapping("/login/doctor")
-    public String doctorLoginPage() { return "login-doctor"; }
-
-    @GetMapping("/login/patient")
-    public String patientLoginPage() { return "login-patient"; }
-
     @PostMapping("/login")
     public String login(@RequestParam String username,
                         @RequestParam String password,
-                        @RequestParam(required = false) String role,
                         HttpSession session, Model model) {
 
-        if ("ADMIN".equals(role)) {
-            Admin admin = adminService.findByUsername(username);
-            if (admin != null && admin.getPassword().equals(password)) {
-                session.setAttribute("loggedInUser", admin.getName());
-                session.setAttribute("userRole", "ADMIN");
-                return "redirect:/home/admin";
-            }
-            model.addAttribute("error", "Invalid admin credentials!");
-            return "login-admin";
+        // Check Admin
+        Admin admin = adminService.findByUsername(username);
+        if (admin != null && admin.getPassword().equals(password)) {
+            session.setAttribute("loggedInUser", admin.getName());
+            session.setAttribute("userRole", "ADMIN");
+            return "redirect:/home/admin";
         }
 
-        if ("DOCTOR".equals(role)) {
-            Doctor doctor = doctorService.findByNameAndPassword(username, password);
-            if (doctor != null) {
-                session.setAttribute("loggedInUser", doctor.getName());
-                session.setAttribute("userRole", "DOCTOR");
-                session.setAttribute("doctorId", doctor.getId());
-                return "redirect:/home/doctor";
-            }
-            model.addAttribute("error", "Invalid credentials or account not approved!");
-            return "login-doctor";
+        // Check Doctor (username = name)
+        Doctor doctor = doctorService.findByNameAndPassword(username, password);
+        if (doctor != null) {
+            session.setAttribute("loggedInUser", doctor.getName());
+            session.setAttribute("userRole", "DOCTOR");
+            session.setAttribute("doctorId", doctor.getId());
+            return "redirect:/home/doctor";
         }
 
-        if ("PATIENT".equals(role)) {
-            Patient patient = patientService.findByPhoneAndPassword(username, password);
-            if (patient != null) {
-                session.setAttribute("loggedInUser", patient.getName());
-                session.setAttribute("userRole", "PATIENT");
-                session.setAttribute("patientId", patient.getId());
-                return "redirect:/home/patient";
-            }
-            model.addAttribute("error", "Invalid credentials or account not approved!");
-            return "login-patient";
+        // Check Patient (username = phone)
+        Patient patient = patientService.findByPhoneAndPassword(username, password);
+        if (patient != null) {
+            session.setAttribute("loggedInUser", patient.getName());
+            session.setAttribute("userRole", "PATIENT");
+            session.setAttribute("patientId", patient.getId());
+            return "redirect:/home/patient";
         }
 
-        return "redirect:/login";
+        model.addAttribute("error", "Invalid username or password! Please try again.");
+        return "login";
     }
 
     @GetMapping("/logout")
