@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Feedback Management</title>
     <link rel="stylesheet" th:href="@{/style.css}"/>
@@ -71,6 +71,50 @@
             <p style="color:#888; font-size:12px; margin-top:4px;">Negative Reviews</p>
         </div>
     </div>
+    <!-- SEARCH BAR -->
+    <div style="display:flex; gap:10px; margin-bottom:20px; align-items:center;">
+        <input type="text" id="searchInput"
+               placeholder="🔍 Search by patient or doctor name..."
+               onkeyup="filterFeedback()"
+               style="padding:10px 15px; border:2px solid #e0e0e0;
+                  border-radius:8px; font-size:14px; outline:none;
+                  width:300px; transition:border 0.3s ease;"
+               onfocus="this.style.borderColor='#1976d2'"
+               onblur="this.style.borderColor='#e0e0e0'"/>
+        <select id="ratingFilter" onchange="filterFeedback()"
+                style="padding:10px 15px; border:2px solid #e0e0e0;
+                   border-radius:8px; font-size:14px; outline:none;
+                   transition:border 0.3s ease;"
+                onfocus="this.style.borderColor='#1976d2'"
+                onblur="this.style.borderColor='#e0e0e0'">
+            <option value="">⭐ All Ratings</option>
+            <option value="5">⭐⭐⭐⭐⭐ Excellent (5)</option>
+            <option value="4">⭐⭐⭐⭐ Good (4)</option>
+            <option value="3">⭐⭐⭐ Average (3)</option>
+            <option value="2">⭐⭐ Poor (2)</option>
+            <option value="1">⭐ Very Poor (1)</option>
+        </select>
+    </div>
+
+    <!-- Add this script at the bottom before </body> -->
+    <script>
+        function filterFeedback() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const rating = document.getElementById('ratingFilter').value;
+            const cards = document.querySelectorAll('.feedback-card');
+
+            cards.forEach(card => {
+                const patient = card.getAttribute('data-patient').toLowerCase();
+                const doctor = card.getAttribute('data-doctor').toLowerCase();
+                const cardRating = card.getAttribute('data-rating');
+
+                const matchSearch = patient.includes(search) || doctor.includes(search);
+                const matchRating = rating === '' || cardRating === rating;
+
+                card.style.display = (matchSearch && matchRating) ? 'block' : 'none';
+            });
+        }
+    </script>
 
 
     <!-- Info message for doctors -->
