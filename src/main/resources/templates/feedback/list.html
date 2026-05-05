@@ -127,34 +127,53 @@
         </p>
     </div>
 
-    <div class="card">
-        <table>
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Patient</th>
-                <th>Doctor</th>
-                <th>Message</th>
-                <th>Rating</th>
-                <th>Date</th>
-                <!-- Only show Actions column for Admin and Patient -->
-                <th th:if="${session.userRole != 'DOCTOR'}">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="f : ${feedbacks}">
-                <td><span class="badge badge-blue" th:text="${f.id}"></span></td>
-                <td th:text="${f.patientName}"></td>
-                <td th:text="${f.doctorName}"></td>
-                <td th:text="${f.message}"></td>
-                <td>
-                        <span class="badge"
-                              th:classappend="${f.rating >= 4} ? 'badge-green' : (${f.rating == 3} ? 'badge-orange' : 'badge-red')"
-                              th:text="${f.rating} + ' ⭐'"></span>
-                </td>
-                <td th:text="${f.date}"></td>
-                <!-- Only show Edit/Delete for Admin and Patient -->
-                <td th:if="${session.userRole != 'DOCTOR'}">
+    <!-- FEEDBACK CARDS -->
+    <div id="feedbackList">
+        <div th:each="f : ${feedbacks}"
+             class="feedback-card"
+             th:attr="data-patient=${f.patientName},
+                  data-doctor=${f.doctorName},
+                  data-rating=${f.rating}"
+             style="background:white; border-radius:16px; padding:20px 25px;
+                box-shadow:0 4px 20px rgba(0,0,0,0.07); margin-bottom:15px;
+                transition:all 0.3s ease; border-left:5px solid #1976d2;"
+             onmouseover="this.style.transform='translateX(5px)'"
+             onmouseout="this.style.transform='translateX(0)'">
+
+            <!-- Header -->
+            <div style="display:flex; justify-content:space-between;
+                    align-items:flex-start; margin-bottom:10px;">
+                <div>
+                    <h4 style="color:#0a2342; font-size:15px;
+                           font-weight:700; margin-bottom:3px;">
+                        👤 <span th:text="${f.patientName}"></span>
+                        <span style="color:#888; font-weight:400;"> → </span>
+                        🩺 <span th:text="${f.doctorName}"></span>
+                    </h4>
+                    <p style="color:#888; font-size:12px;">
+                        📅 <span th:text="${f.date}"></span>
+                    </p>
+                </div>
+                <span class="badge"
+                      th:classappend="${f.rating >= 4} ? 'badge-green' : (${f.rating == 3} ? 'badge-orange' : 'badge-red')"
+                      th:text="${f.rating} + ' ⭐'"></span>
+            </div>
+
+            <!-- Message -->
+            <div style="color:#555; font-size:14px; line-height:1.6;
+                    padding:10px 15px; background:#f8f9fa;
+                    border-radius:8px; margin:10px 0; font-style:italic;">
+                💬 "<span th:text="${f.message}"></span>"
+            </div>
+
+            <!-- Footer -->
+            <div style="display:flex; justify-content:space-between;
+                    align-items:center; margin-top:10px;">
+            <span class="badge badge-blue"
+                  th:text="'ID: ' + ${f.id}"
+                  style="font-size:11px;"></span>
+                <div th:if="${session.userRole != 'DOCTOR'}"
+                     style="display:flex; gap:8px;">
                     <a th:href="@{/feedback/edit/{id}(id=${f.id})}"
                        class="btn btn-warning"
                        style="padding:6px 14px; font-size:12px;">Edit</a>
@@ -162,16 +181,18 @@
                        class="btn btn-danger"
                        style="padding:6px 14px; font-size:12px;"
                        onclick="return confirm('Are you sure?')">Delete</a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(feedbacks)}">
-                <td colspan="7" style="text-align:center; color:#888; padding:30px;">
-                    <div style="font-size:40px; margin-bottom:10px;">💬</div>
-                    No feedback found yet
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(feedbacks)}"
+             style="text-align:center; padding:50px; background:white;
+                border-radius:16px; color:#aaa;
+                box-shadow:0 4px 20px rgba(0,0,0,0.07);">
+            <div style="font-size:60px; margin-bottom:10px;">💬</div>
+            <p style="font-size:15px;">No feedback found yet</p>
+        </div>
     </div>
 </div>
 </body>
