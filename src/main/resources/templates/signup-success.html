@@ -1,22 +1,133 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Registration Submitted</title>
-    <link rel="stylesheet" th:href="@{/style.css}"/>
+    <title>Registration Submitted - HealthCare</title>
     <style>
-        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #0a2342, #1976d2); }
-        .box { background: white; padding: 50px 40px; border-radius: 20px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 420px; animation: fadeIn 0.5s ease; }
-        .box h1 { color: #2e7d32; font-size: 60px; margin-bottom: 10px; }
-        .box h2 { color: #0a2342; margin-bottom: 10px; }
-        .box p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a2342 0%, #1976d2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .success-box {
+            background: white;
+            border-radius: 24px;
+            padding: 60px 50px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease;
+        }
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            margin: 0 auto 25px;
+        }
+        .success-box h1 {
+            font-size: 26px;
+            color: #0a2342;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .success-box p {
+            color: #888;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+        .steps {
+            background: #f8f9fa;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .steps h4 {
+            font-size: 13px;
+            color: #0a2342;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #555;
+        }
+        .step-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e3f2fd;
+            color: #1976d2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .login-btn {
+            display: block;
+            padding: 14px;
+            background: linear-gradient(135deg, #1976d2, #0a2342);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(25,118,210,0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
-<div class="box">
-    <h1>✅</h1>
-    <h2>Registration Submitted!</h2>
-    <p th:text="${message}"></p>
-    <a href="/login" class="btn btn-primary">Go to Login</a>
+<div class="success-box">
+    <div class="success-icon">✅</div>
+    <h1>Registration Submitted!</h1>
+    <p th:text="${message}">Your registration has been submitted successfully.</p>
+
+    <div class="steps">
+        <h4>📋 What happens next?</h4>
+        <div class="step-item">
+            <div class="step-dot">1</div>
+            Admin reviews your registration request
+        </div>
+        <div class="step-item">
+            <div class="step-dot">2</div>
+            You will be approved or rejected
+        </div>
+        <div class="step-item">
+            <div class="step-dot">3</div>
+            Once approved you can login
+        </div>
+        <div class="step-item">
+            <div class="step-dot">4</div>
+            Access your personalized dashboard!
+        </div>
+    </div>
+
+    <a href="/login" class="login-btn">Go to Login →</a>
 </div>
 </body>
 </html>
