@@ -23,16 +23,22 @@ public class FeedbackController {
     @GetMapping("/add")
     public String showAddForm(HttpSession session, Model model) {
         if (session.getAttribute("userRole") == null) return "redirect:/login";
-        // Doctors cant add feedback
         if ("DOCTOR".equals(session.getAttribute("userRole"))) return "redirect:/feedback";
-        model.addAttribute("feedback", new Feedback());
+
+        Feedback feedback = new Feedback();
+
+        if ("PATIENT".equals(session.getAttribute("userRole"))) {
+            feedback.setPatientName((String) session.getAttribute("loggedInUser"));
+        }
+
+        model.addAttribute("feedback", feedback);
         return "feedback/add";
     }
 
     @PostMapping("/add")
     public String add(HttpSession session, @ModelAttribute Feedback feedback) {
         if (session.getAttribute("userRole") == null) return "redirect:/login";
-
+        // Doctors cannot add feedback
         if ("DOCTOR".equals(session.getAttribute("userRole"))) return "redirect:/feedback";
         feedbackService.saveFeedback(feedback);
         return "redirect:/feedback";
@@ -41,7 +47,7 @@ public class FeedbackController {
     @GetMapping("/edit/{id}")
     public String showEditForm(HttpSession session, @PathVariable String id, Model model) {
         if (session.getAttribute("userRole") == null) return "redirect:/login";
-        // Doctors cant edit feedback
+        // Doctors cannot edit feedback
         if ("DOCTOR".equals(session.getAttribute("userRole"))) return "redirect:/feedback";
         model.addAttribute("feedback", feedbackService.getFeedbackById(id));
         return "feedback/edit";
@@ -51,7 +57,7 @@ public class FeedbackController {
     public String edit(HttpSession session, @PathVariable String id,
                        @ModelAttribute Feedback feedback) {
         if (session.getAttribute("userRole") == null) return "redirect:/login";
-
+        // Doctors cannot edit feedback
         if ("DOCTOR".equals(session.getAttribute("userRole"))) return "redirect:/feedback";
         feedbackService.updateFeedback(id, feedback);
         return "redirect:/feedback";
@@ -60,7 +66,7 @@ public class FeedbackController {
     @GetMapping("/delete/{id}")
     public String delete(HttpSession session, @PathVariable String id) {
         if (session.getAttribute("userRole") == null) return "redirect:/login";
-        // Doctors cant delete feedback
+        // Doctors cannot delete feedback
         if ("DOCTOR".equals(session.getAttribute("userRole"))) return "redirect:/feedback";
         feedbackService.deleteFeedback(id);
         return "redirect:/feedback";
