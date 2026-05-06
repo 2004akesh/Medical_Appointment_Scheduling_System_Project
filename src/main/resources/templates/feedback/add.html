@@ -57,13 +57,73 @@
             </div>
             <div class="form-group">
                 <label>Rating</label>
-                <select th:field="*{rating}">
-                    <option value="5">⭐⭐⭐⭐⭐ Excellent (5)</option>
-                    <option value="4">⭐⭐⭐⭐ Good (4)</option>
-                    <option value="3">⭐⭐⭐ Average (3)</option>
-                    <option value="2">⭐⭐ Poor (2)</option>
-                    <option value="1">⭐ Very Poor (1)</option>
-                </select>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:80px;">
+                        <input type="radio" th:field="*{rating}" id="r5" value="5"
+                               style="display:none;"/>
+                        <label for="r5"
+                               style="display:block; text-align:center; padding:10px;
+                          border:2px solid #e0e0e0; border-radius:10px;
+                          cursor:pointer; font-size:13px; font-weight:600;
+                          transition:all 0.3s ease;"
+                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
+                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
+                            ⭐⭐⭐⭐⭐<br/>Excellent
+                        </label>
+                    </div>
+                    <div style="flex:1; min-width:80px;">
+                        <input type="radio" th:field="*{rating}" id="r4" value="4"
+                               style="display:none;"/>
+                        <label for="r4"
+                               style="display:block; text-align:center; padding:10px;
+                          border:2px solid #e0e0e0; border-radius:10px;
+                          cursor:pointer; font-size:13px; font-weight:600;
+                          transition:all 0.3s ease;"
+                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
+                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
+                            ⭐⭐⭐⭐<br/>Good
+                        </label>
+                    </div>
+                    <div style="flex:1; min-width:80px;">
+                        <input type="radio" th:field="*{rating}" id="r3" value="3"
+                               style="display:none;"/>
+                        <label for="r3"
+                               style="display:block; text-align:center; padding:10px;
+                          border:2px solid #e0e0e0; border-radius:10px;
+                          cursor:pointer; font-size:13px; font-weight:600;
+                          transition:all 0.3s ease;"
+                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
+                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
+                            ⭐⭐⭐<br/>Average
+                        </label>
+                    </div>
+                    <div style="flex:1; min-width:80px;">
+                        <input type="radio" th:field="*{rating}" id="r2" value="2"
+                               style="display:none;"/>
+                        <label for="r2"
+                               style="display:block; text-align:center; padding:10px;
+                          border:2px solid #e0e0e0; border-radius:10px;
+                          cursor:pointer; font-size:13px; font-weight:600;
+                          transition:all 0.3s ease;"
+                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
+                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
+                            ⭐⭐<br/>Poor
+                        </label>
+                    </div>
+                    <div style="flex:1; min-width:80px;">
+                        <input type="radio" th:field="*{rating}" id="r1" value="1"
+                               style="display:none;"/>
+                        <label for="r1"
+                               style="display:block; text-align:center; padding:10px;
+                          border:2px solid #e0e0e0; border-radius:10px;
+                          cursor:pointer; font-size:13px; font-weight:600;
+                          transition:all 0.3s ease;"
+                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
+                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
+                            ⭐<br/>Very Poor
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label>Date</label>
