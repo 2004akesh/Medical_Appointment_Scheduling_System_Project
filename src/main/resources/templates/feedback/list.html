@@ -154,9 +154,25 @@
                         📅 <span th:text="${f.date}"></span>
                     </p>
                 </div>
-                <span class="badge"
-                      th:classappend="${f.rating >= 4} ? 'badge-green' : (${f.rating == 3} ? 'badge-orange' : 'badge-red')"
-                      th:text="${f.rating} + ' ⭐'"></span>
+                <div style="text-align:right;">
+                    <div style="color:#ffc107; font-size:18px; margin-bottom:4px;">
+                        <span th:if="${f.rating >= 1}">★</span>
+                        <span th:if="${f.rating < 1}">☆</span>
+                        <span th:if="${f.rating >= 2}">★</span>
+                        <span th:if="${f.rating < 2}">☆</span>
+                        <span th:if="${f.rating >= 3}">★</span>
+                        <span th:if="${f.rating < 3}">☆</span>
+                        <span th:if="${f.rating >= 4}">★</span>
+                        <span th:if="${f.rating < 4}">☆</span>
+                        <span th:if="${f.rating >= 5}">★</span>
+                        <span th:if="${f.rating < 5}">☆</span>
+                    </div>
+                    <span class="badge"
+                          th:classappend="${f.rating >= 4} ? 'badge-green' : (${f.rating == 3} ? 'badge-orange' : 'badge-red')"
+                          th:text="${f.rating == 5} ? 'Excellent' : (${f.rating == 4} ? 'Good' : (${f.rating == 3} ? 'Average' : (${f.rating == 2} ? 'Poor' : 'Very Poor')))"
+                          style="font-size:11px;">
+    </span>
+                </div>
             </div>
 
             <!-- Message -->
