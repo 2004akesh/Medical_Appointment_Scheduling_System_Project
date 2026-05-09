@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Patient Portal - HealthCare</title>
     <style>
@@ -104,17 +104,6 @@
         }
         .book-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(25,118,210,0.4); }
 
-        .availability-box {
-            background: #e3f2fd; border-radius: 8px;
-            padding: 12px; margin-bottom: 18px;
-        }
-        .availability-box p { font-size: 12px; color: #1565c0; font-weight: 600; margin-bottom: 8px; }
-        .availability-item {
-            font-size: 12px; color: #444; margin-bottom: 5px;
-            padding: 8px; background: white; border-radius: 6px;
-        }
-        .availability-item strong { color: #0a2342; }
-
         .appointments-section { padding: 0 80px 70px; }
         .appt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .appt-header h2 { font-size: 28px; color: #0a2342; font-weight: 800; }
@@ -147,7 +136,11 @@
         }
         .empty-state div { font-size: 60px; margin-bottom: 10px; }
         .empty-state p { font-size: 15px; }
-
+        .slot-btn-selected {
+            border-color: #1976d2 !important;
+            background: #e3f2fd !important;
+            color: #1976d2 !important;
+        }
         .footer { background: #0a2342; color: rgba(255,255,255,0.6); text-align: center; padding: 25px; font-size: 13px; }
 
         @keyframes fadeIn {
@@ -184,22 +177,10 @@
 
 <!-- STATS BAR -->
 <div class="stats-bar">
-    <div class="stat-item">
-        <h3>50+</h3>
-        <p>Qualified Doctors</p>
-    </div>
-    <div class="stat-item">
-        <h3>24/7</h3>
-        <p>Emergency Services</p>
-    </div>
-    <div class="stat-item">
-        <h3>100%</h3>
-        <p>Patient Satisfaction</p>
-    </div>
-    <div class="stat-item">
-        <h3>10+</h3>
-        <p>Specializations</p>
-    </div>
+    <div class="stat-item"><h3>50+</h3><p>Qualified Doctors</p></div>
+    <div class="stat-item"><h3>24/7</h3><p>Emergency Services</p></div>
+    <div class="stat-item"><h3>100%</h3><p>Patient Satisfaction</p></div>
+    <div class="stat-item"><h3>10+</h3><p>Specializations</p></div>
 </div>
 
 <!-- SERVICES -->
@@ -245,7 +226,7 @@
     <div class="book-inner">
         <div class="book-left">
             <h2>📅 Book an Appointment</h2>
-            <p>Select your preferred doctor, date and time. Check doctor availability below before booking!</p>
+            <p>Select your preferred doctor and date. Available time slots will be shown automatically!</p>
             <div class="book-feature">
                 <span class="book-feature-icon">✅</span>
                 Choose from our qualified doctors
@@ -256,89 +237,118 @@
             </div>
             <div class="book-feature">
                 <span class="book-feature-icon">✅</span>
-                Pick a time within their hours
+                Pick from available time slots only
             </div>
             <div class="book-feature">
                 <span class="book-feature-icon">✅</span>
                 Set urgency for priority care
             </div>
         </div>
+
         <div class="book-form">
+            <!-- Booking Error -->
+            <div th:if="${session.bookingError != null}"
+                 style="background:#ffebee; border-left:5px solid #e53935;
+                        border-radius:10px; padding:15px; margin-bottom:20px;
+                        display:flex; align-items:center; gap:10px;">
+                <span style="font-size:20px;">⚠️</span>
+                <p style="color:#c62828; font-size:13px;"
+                   th:text="${session.bookingError}"></p>
+            </div>
+
             <form action="/appointments/book" method="post">
                 <input type="hidden" name="patientName" th:value="${userName}"/>
 
+                <!-- Select Doctor -->
                 <div class="book-form-group">
                     <label>Select Doctor</label>
-                    <select name="doctorName" required>
+                    <select name="doctorName" id="doctorSelect" required
+                            onchange="updateSlots()">
                         <option value="">-- Select a Doctor --</option>
                         <option th:each="doctor : ${doctors}"
                                 th:value="${doctor.name}"
+                                th:selected="${doctor.name == selectedDoctor}"
                                 th:text="${doctor.name} + ' - ' + ${doctor.specialization}">
                         </option>
                     </select>
                 </div>
 
                 <!-- Doctor Availability Info -->
-                <div style="margin-bottom: 18px;">
-                    <label style="display:block; font-size:13px; font-weight:600; color:#0a2342; margin-bottom:8px;">
-                        📋 Doctor Availability Information
+                <div th:if="${selectedDoctor != null and selectedDoctor != ''}"
+                     style="margin-bottom:18px;">
+                    <label style="display:block; font-size:13px; font-weight:600;
+                                  color:#0a2342; margin-bottom:8px;">
+                        📋 Doctor Availability
                     </label>
                     <div th:each="s : ${availableSchedules}"
-                         style="background: #f8f9fa; border: 2px solid #e3f2fd; border-left: 5px solid #1976d2;
-                border-radius: 10px; padding: 12px 15px; margin-bottom: 8px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                         th:if="${s.doctorName == selectedDoctor}"
+                         style="background:#f8f9fa; border:2px solid #e3f2fd;
+                                border-left:5px solid #1976d2; border-radius:10px;
+                                padding:15px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
                             <div>
-                                <p style="font-size:14px; font-weight:700; color:#0a2342; margin-bottom:4px;">
-                                    🩺 <span th:text="${s.doctorName}"></span>
-                                </p>
-                                <p style="font-size:12px; color:#555; margin-bottom:2px;">
+                                <p style="font-size:13px; color:#555; margin-bottom:4px;">
                                     📅 <span th:text="${s.availableDays}"></span>
                                 </p>
-                                <p style="font-size:12px; color:#555; margin-bottom:2px;">
-                                    ⏰ <span th:text="${s.startTime} + ' — ' + ${s.endTime}"></span>
+                                <p style="font-size:13px; color:#555; margin-bottom:4px;">
+                                    ⏰ <span th:text="${s.startTime}"></span>
+                                    — <span th:text="${s.endTime}"></span>
                                 </p>
-                                <p style="font-size:12px; color:#555;">
+                                <p style="font-size:13px; color:#555; margin-bottom:4px;">
                                     🚪 Room: <span th:text="${s.roomNumber}"></span>
                                 </p>
+                                <p style="font-size:13px; color:#555;">
+                                    ⏱️ <span th:text="${s.slotDuration}"></span> min per slot
+                                </p>
                             </div>
-                            <div style="text-align:center;">
-                                <div style="background:#e8f5e9; border-radius:10px; padding:10px 15px;">
-                                    <p style="font-size:22px; font-weight:800; color:#2e7d32;"
-                                       th:text="${s.maxPatients - s.currentPatients}"></p>
-                                    <p style="font-size:11px; color:#555;">slots left</p>
-                                </div>
+                            <div style="text-align:center; background:#e8f5e9;
+                                        border-radius:10px; padding:12px 18px;">
+                                <p style="font-size:24px; font-weight:800; color:#2e7d32; margin:0;"
+                                   th:text="${s.maxPatients - s.currentPatients}"></p>
+                                <p style="font-size:11px; color:#555; margin:0;">slots left</p>
                             </div>
                         </div>
                     </div>
-                    <div th:if="${#lists.isEmpty(availableSchedules)}"
-                         style="background:#fff3e0; border-radius:10px; padding:12px; text-align:center; color:#e65100; font-size:13px;">
-                        ⚠️ No doctor schedules available yet. Please check back later.
+                </div>
+
+                <!-- Date -->
+                <div class="book-form-group">
+                    <label>Date</label>
+                    <input type="date" name="date" id="dateSelect"
+                           th:value="${selectedDate}"
+                           onchange="updateSlots()" required/>
+                </div>
+
+                <!-- Available Time Slots -->
+                <div class="book-form-group">
+                    <label>Available Time Slots</label>
+                    <div th:if="${#lists.isEmpty(availableTimeSlots)}"
+                         style="background:#f8f9fa; border:2px solid #e0e0e0;
+                                border-radius:8px; padding:15px; text-align:center;
+                                color:#888; font-size:13px;">
+                        👆 Select a doctor and date to see available time slots
+                    </div>
+                    <div th:if="${!#lists.isEmpty(availableTimeSlots)}"
+                         style="display:flex; flex-wrap:wrap; gap:8px;">
+                        <label th:each="slot : ${availableTimeSlots}"
+                               style="cursor:pointer;">
+                            <input type="radio" name="timeSlot"
+                                   th:value="${slot}" required
+                                   style="display:none;"/>
+                            <span th:text="${slot}"
+                                  class="time-slot-btn"
+                                  onclick="selectSlot(this)"
+                                  style="display:block; padding:8px 14px;
+                                         border:2px solid #e0e0e0; border-radius:8px;
+                                         font-size:13px; font-weight:600;
+                                         transition:all 0.3s ease; background:white;
+                                         cursor:pointer;">
+                            </span>
+                        </label>
                     </div>
                 </div>
 
-                <div class="book-form-group">
-                    <label>Date</label>
-                    <input type="date" name="date" required/>
-                </div>
-
-                <div class="book-form-group">
-                    <label>Time Slot</label>
-                    <select name="timeSlot">
-                        <option value="06:00 AM">06:00 AM</option>
-                        <option value="07:00 AM">07:00 AM</option>
-                        <option value="08:00 AM">08:00 AM</option>
-                        <option value="09:00 AM">09:00 AM</option>
-                        <option value="10:00 AM">10:00 AM</option>
-                        <option value="11:00 AM">11:00 AM</option>
-                        <option value="12:00 PM">12:00 PM</option>
-                        <option value="01:00 PM">01:00 PM</option>
-                        <option value="02:00 PM">02:00 PM</option>
-                        <option value="03:00 PM">03:00 PM</option>
-                        <option value="04:00 PM">04:00 PM</option>
-                        <option value="05:00 PM">05:00 PM</option>
-                    </select>
-                </div>
-
+                <!-- Urgency -->
                 <div class="book-form-group">
                     <label>Urgency Level</label>
                     <select name="urgency">
@@ -348,7 +358,9 @@
                     </select>
                 </div>
 
-                <button type="submit" class="book-submit">📅 Book Appointment</button>
+                <button type="submit" class="book-submit">
+                    📅 Book Appointment
+                </button>
             </form>
         </div>
     </div>
@@ -389,6 +401,28 @@
 <div class="footer">
     © 2026 HealthCare Management System. All rights reserved. ❤️
 </div>
+
+<script>
+    function updateSlots() {
+        const doctor = document.getElementById('doctorSelect').value;
+        const date = document.getElementById('dateSelect').value;
+        if (doctor && date) {
+            window.location.href = '/home/patient/slots?doctorName='
+                + encodeURIComponent(doctor) + '&date=' + date;
+        }
+    }
+
+    function selectSlot(el) {
+        document.querySelectorAll('.time-slot-btn').forEach(s => {
+            s.style.borderColor = '#e0e0e0';
+            s.style.background = 'white';
+            s.style.color = '#333';
+        });
+        el.style.borderColor = '#1976d2';
+        el.style.background = '#e3f2fd';
+        el.style.color = '#1976d2';
+    }
+</script>
 
 </body>
 </html>
