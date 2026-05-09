@@ -12,10 +12,7 @@ public class SchedulingService implements ManagementService<Schedule> {
 
     private static final String FILE_PATH = "src/main/resources/data/schedules.txt";
 
-    // =============================================
-    // GENERATE TIME SLOTS
-    // Auto generates slots based on start/end/duration
-    // =============================================
+
     public List<String> generateTimeSlots(String startTime, String endTime,
                                           int slotDuration) {
         List<String> slots = new ArrayList<>();
@@ -34,7 +31,7 @@ public class SchedulingService implements ManagementService<Schedule> {
         return slots;
     }
 
-    // Get available slots for a doctor on a date
+
     public List<String> getAvailableSlots(String doctorName,
                                           List<String> bookedSlots) {
         List<Schedule> schedules = getSchedulesByDoctor(doctorName);
@@ -47,7 +44,7 @@ public class SchedulingService implements ManagementService<Schedule> {
                 schedule.getSlotDuration()
         );
 
-        // Remove already booked slots
+        
         allSlots.removeAll(bookedSlots);
         return allSlots;
     }
