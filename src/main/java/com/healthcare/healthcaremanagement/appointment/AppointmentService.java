@@ -23,6 +23,7 @@ public class AppointmentService implements ManagementService<Appointment> {
         return sorted;
     }
 
+
     public List<Appointment> getAppointmentsSortedByTime() {
         List<Appointment> list = getAll();
         int n = list.size();
@@ -109,4 +110,13 @@ public class AppointmentService implements ManagementService<Appointment> {
             }
         } catch (IOException e) { e.printStackTrace(); }
     }
+    public boolean isSlotAlreadyBooked(String doctorName, String date,
+                                       String timeSlot) {
+        return getAll().stream()
+                .anyMatch(a -> a.getDoctorName().equals(doctorName)
+                        && a.getDate().equals(date)
+                        && a.getTimeSlot().equals(timeSlot)
+                        && !a.getStatus().equals("Cancelled"));
+    }
+
 }
