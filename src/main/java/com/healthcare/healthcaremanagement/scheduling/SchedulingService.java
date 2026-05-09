@@ -3,12 +3,54 @@ package com.healthcare.healthcaremanagement.scheduling;
 import com.healthcare.healthcaremanagement.ManagementService;
 import org.springframework.stereotype.Service;
 import java.io.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
 public class SchedulingService implements ManagementService<Schedule> {
 
     private static final String FILE_PATH = "src/main/resources/data/schedules.txt";
+
+    // =============================================
+    // GENERATE TIME SLOTS
+    // Auto generates slots based on start/end/duration
+    // =============================================
+    public List<String> generateTimeSlots(String startTime, String endTime,
+                                          int slotDuration) {
+        List<String> slots = new ArrayList<>();
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
+            LocalTime start = LocalTime.parse(startTime.toUpperCase(), formatter);
+            LocalTime end = LocalTime.parse(endTime.toUpperCase(), formatter);
+
+            while (start.isBefore(end)) {
+                slots.add(start.format(formatter));
+                start = start.plusMinutes(slotDuration);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return slots;
+    }
+
+    // Get available slots for a doctor on a date
+    public List<String> getAvailableSlots(String doctorName,
+                                          List<String> bookedSlots) {
+        List<Schedule> schedules = getSchedulesByDoctor(doctorName);
+        if (schedules.isEmpty()) return new ArrayList<>();
+
+        Schedule schedule = schedules.get(0);
+        List<String> allSlots = generateTimeSlots(
+                schedule.getStartTime(),
+                schedule.getEndTime(),
+                schedule.getSlotDuration()
+        );
+
+        // Remove already booked slots
+        allSlots.removeAll(bookedSlots);
+        return allSlots;
+    }
 
     public List<Schedule> getSchedulesByDoctor(String doctorName) {
         return getAll().stream()
@@ -32,7 +74,7 @@ public class SchedulingService implements ManagementService<Schedule> {
                 if (p.length == 9) {
                     list.add(new Schedule(p[0], p[1], p[2], p[3], p[4],
                             p[5], Integer.parseInt(p[6]),
-                            Integer.parseInt(p[7]), p[8]));
+                            p[7], Integer.parseInt(p[8])));
                 }
             }
         } catch (IOException e) {}
@@ -43,6 +85,7 @@ public class SchedulingService implements ManagementService<Schedule> {
     public void save(Schedule s) {
         List<Schedule> list = getAll();
         s.setId(UUID.randomUUID().toString().substring(0, 8));
+        // Auto set status
         if (s.getCurrentPatients() >= s.getMaxPatients()) {
             s.setStatus("Full");
         } else {
@@ -62,8 +105,8 @@ public class SchedulingService implements ManagementService<Schedule> {
                 s.setStartTime(updated.getStartTime());
                 s.setEndTime(updated.getEndTime());
                 s.setRoomNumber(updated.getRoomNumber());
-                s.setMaxPatients(updated.getMaxPatients());
                 s.setCurrentPatients(updated.getCurrentPatients());
+                s.setSlotDuration(updated.getSlotDuration());
                 if (s.getCurrentPatients() >= s.getMaxPatients()) {
                     s.setStatus("Full");
                 } else {
@@ -100,8 +143,8 @@ public class SchedulingService implements ManagementService<Schedule> {
                 bw.write(s.getId() + "," + s.getDoctorName() + "," +
                         s.getAvailableDays() + "," + s.getStartTime() + "," +
                         s.getEndTime() + "," + s.getRoomNumber() + "," +
-                        s.getMaxPatients() + "," + s.getCurrentPatients() + "," +
-                        s.getStatus());
+                        s.getCurrentPatients() + "," + s.getStatus() + "," +
+                        s.getSlotDuration());
                 bw.newLine();
             }
         } catch (IOException e) { e.printStackTrace(); }
