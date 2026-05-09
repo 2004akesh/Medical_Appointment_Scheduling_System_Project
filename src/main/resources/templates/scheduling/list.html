@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Scheduling Management</title>
     <link rel="stylesheet" th:href="@{/style.css}"/>
@@ -31,13 +31,17 @@
 <div class="main-content">
     <div class="page-header">
         <div>
-            <h1 th:if="${session.userRole == 'ADMIN'}">Scheduling Management</h1>
-            <h1 th:if="${session.userRole == 'DOCTOR'}">My Availability Schedule</h1>
+            <h1 th:if="${session.userRole == 'ADMIN'}">
+                Scheduling Management
+            </h1>
+            <h1 th:if="${session.userRole == 'DOCTOR'}">
+                My Availability Schedule
+            </h1>
             <p th:if="${session.userRole == 'ADMIN'}">
                 View and manage all doctor schedules
             </p>
             <p th:if="${session.userRole == 'DOCTOR'}">
-                Set your availability so patients can book appointments with you
+                Set your availability so patients can book appointments
             </p>
         </div>
         <a href="/scheduling/add" class="btn btn-primary">+ Add Schedule</a>
@@ -52,7 +56,9 @@
                 <th>Available Days</th>
                 <th>Time Period</th>
                 <th>Room</th>
-                <th>Patients</th>
+                <th>Slot Duration</th>
+                <th>Max Patients</th>
+                <th>Booked</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -65,14 +71,22 @@
                         <span class="badge badge-orange"
                               th:text="${s.availableDays}"></span>
                 </td>
-                <td>
-                    <span th:text="${s.startTime} + ' - ' + ${s.endTime}"></span>
-                </td>
+                <td th:text="${s.startTime} + ' - ' + ${s.endTime}"></td>
                 <td th:text="${s.roomNumber}"></td>
                 <td>
-                    <span th:text="${s.currentPatients} + ' / ' + ${s.maxPatients}"></span>
-                    <div style="background:#f0f0f0; border-radius:10px; height:6px; margin-top:5px; width:80px;">
-                        <div th:style="'width:' + (${s.maxPatients} > 0 ? ${s.currentPatients} * 100 / ${s.maxPatients} : 0) + '%; background:#1976d2; border-radius:10px; height:6px;'"></div>
+                        <span class="badge badge-blue"
+                              th:text="${s.slotDuration} + ' min'"></span>
+                </td>
+                <td th:text="${s.maxPatients}"></td>
+                <td>
+                    <span th:text="${s.currentPatients}"></span>
+                    <!-- Progress bar -->
+                    <div style="background:#f0f0f0; border-radius:10px;
+                                    height:6px; margin-top:5px; width:80px;">
+                        <div th:style="'width:' + (${s.maxPatients} > 0 ?
+                                          ${s.currentPatients} * 100 / ${s.maxPatients} : 0) +
+                                          '%; background:#1976d2; border-radius:10px; height:6px;'">
+                        </div>
                     </div>
                 </td>
                 <td>
@@ -91,10 +105,12 @@
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(schedules)}">
-                <td colspan="8" style="text-align:center; color:#888; padding:30px;">
+                <td colspan="10"
+                    style="text-align:center; color:#888; padding:30px;">
                     <div style="font-size:40px; margin-bottom:10px;">📭</div>
                     <span th:if="${session.userRole == 'DOCTOR'}">
-                            You haven't added your schedule yet. Click "+ Add Schedule" to set your availability!
+                            You haven't added your schedule yet!
+                            Click "+ Add Schedule" to set your availability!
                         </span>
                     <span th:if="${session.userRole == 'ADMIN'}">
                             No schedules found.
@@ -106,4 +122,4 @@
     </div>
 </div>
 </body>
-</html>
+</html>   
