@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Add Schedule</title>
     <link rel="stylesheet" th:href="@{/style.css}"/>
@@ -32,8 +32,12 @@
     <div class="page-header">
         <div>
             <h1>Add Schedule</h1>
-            <p th:if="${session.userRole == 'DOCTOR'}">Set your availability for patients</p>
-            <p th:if="${session.userRole == 'ADMIN'}">Set up a doctor's availability</p>
+            <p th:if="${session.userRole == 'DOCTOR'}">
+                Set your availability for patients
+            </p>
+            <p th:if="${session.userRole == 'ADMIN'}">
+                Set up a doctor's availability
+            </p>
         </div>
         <a href="/scheduling" class="btn btn-primary">← Back to List</a>
     </div>
@@ -81,10 +85,6 @@
                     <option value="12:00 PM">12:00 PM</option>
                     <option value="01:00 PM">01:00 PM</option>
                     <option value="02:00 PM">02:00 PM</option>
-                    <option value="03:00 PM">03:00 PM</option>
-                    <option value="04:00 PM">04:00 PM</option>
-                    <option value="05:00 PM">05:00 PM</option>
-                    <option value="06:00 PM">06:00 PM</option>
                 </select>
             </div>
 
@@ -101,10 +101,6 @@
                     <option value="04:00 PM">04:00 PM</option>
                     <option value="05:00 PM">05:00 PM</option>
                     <option value="06:00 PM">06:00 PM</option>
-                    <option value="07:00 PM">07:00 PM</option>
-                    <option value="08:00 PM">08:00 PM</option>
-                    <option value="09:00 PM">09:00 PM</option>
-                    <option value="10:00 PM">10:00 PM</option>
                 </select>
             </div>
 
@@ -115,15 +111,32 @@
             </div>
 
             <div class="form-group">
-                <label>Max Patients Per Day</label>
-                <input type="number" th:field="*{maxPatients}"
-                       placeholder="e.g. 10" required/>
+                <label>Appointment Slot Duration</label>
+                <select th:field="*{slotDuration}">
+                    <option value="15">15 minutes per patient</option>
+                    <option value="30">30 minutes per patient</option>
+                    <option value="45">45 minutes per patient</option>
+                    <option value="60">60 minutes per patient</option>
+                </select>
+                <small style="color:#888; font-size:12px; margin-top:4px; display:block;">
+                    ⏰ Max patients will be calculated automatically
+                </small>
             </div>
 
-            <div class="form-group">
-                <label>Current Patients Booked</label>
-                <input type="number" th:field="*{currentPatients}"
-                       placeholder="e.g. 0" value="0" required/>
+            <!-- Auto calculated info box -->
+            <div style="background:#e3f2fd; border-radius:10px;
+                        padding:15px; margin-bottom:20px;">
+                <p style="font-size:13px; color:#1565c0; font-weight:600;
+                          margin-bottom:5px;">
+                    📊 Auto Calculated:
+                </p>
+                <p style="font-size:12px; color:#555;">
+                    The system will automatically calculate the maximum number
+                    of patients based on your start time, end time and slot duration.
+                </p>
+                <p style="font-size:12px; color:#555; margin-top:5px;">
+                    Example: 6AM - 9AM with 30 min slots = <strong>6 patients max</strong>
+                </p>
             </div>
 
             <button type="submit" class="btn btn-success">Add Schedule</button>
@@ -133,4 +146,4 @@
     </div>
 </div>
 </body>
-</html>
+</html> 
