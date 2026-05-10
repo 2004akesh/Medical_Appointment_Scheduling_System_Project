@@ -1,64 +1,198 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Add Patient</title>
     <link rel="stylesheet" th:href="@{/style.css}"/>
+    <style>
+        .form-header {
+            background: linear-gradient(135deg, #0a2342, #1976d2);
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .form-header-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+        .form-header h2 {
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .form-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .input-icon {
+            position: relative;
+        }
+        .input-icon span {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+        .input-icon input,
+        .input-icon select {
+            padding-left: 38px !important;
+        }
+        .form-divider {
+            border: none;
+            border-top: 2px solid #f0f4f8;
+            margin: 20px 0;
+        }
+        .form-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0a2342;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
 </head>
 <body>
 <div class="navbar">
     <a class="logo" href="/home/admin">🏥 HealthCare <span>Management System</span></a>
     <nav>
-        <a href="/home/admin"><span>🏠</span> Home</a>
-        <a href="/patients" class="active"><span>👤</span> Patients</a>
-        <a href="/doctors"><span>🩺</span> Doctors</a>
-        <a href="/appointments"><span>📅</span> Appointments</a>
-        <a href="/scheduling"><span>🗓️</span> Scheduling</a>
-        <a href="/feedback"><span>💬</span> Feedback</a>
-        <a href="/admin"><span>⚙️</span> Admin</a>
-        <a href="/admin/requests"><span>🔔</span> Requests</a>
-        <a href="/logout" class="logout-btn"><span>🚪</span> Logout</a>
+        <a href="/home/admin">🏠 Home</a>
+        <a href="/patients" class="active">👤 Patients</a>
+        <a href="/doctors">🩺 Doctors</a>
+        <a href="/appointments">📅 Appointments</a>
+        <a href="/scheduling">🗓️ Scheduling</a>
+        <a href="/feedback">💬 Feedback</a>
+        <a href="/admin">⚙️ Admin</a>
+        <a href="/admin/requests">🔔 Requests</a>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
     </nav>
 </div>
+
 <div class="main-content">
     <div class="page-header">
-        <div><h1>Add New Patient</h1><p>Fill in the details below</p></div>
+        <div>
+            <h1>Add New Patient</h1>
+            <p>Fill in the patient details below</p>
+        </div>
         <a href="/patients" class="btn btn-primary">← Back to List</a>
     </div>
-    <div class="card" style="max-width: 600px;">
+
+    <div class="card" style="max-width: 650px;">
+
+        <!-- Form Header -->
+        <div class="form-header">
+            <div class="form-header-icon">👤</div>
+            <div>
+                <h2>Patient Registration</h2>
+                <p>Enter the patient's personal information</p>
+            </div>
+        </div>
+
         <form th:action="@{/patients/add}" th:object="${patient}" method="post">
+
+            <!-- Personal Information -->
+            <div class="form-section-title">
+                📋 Personal Information
+            </div>
+
             <div class="form-group">
                 <label>Full Name</label>
-                <input type="text" th:field="*{name}" placeholder="Enter patient name" required/>
+                <div class="input-icon">
+                    <span>👤</span>
+                    <input type="text" th:field="*{name}"
+                           placeholder="Enter patient full name" required/>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Age</label>
-                <input type="number" th:field="*{age}" placeholder="Enter age" required/>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Age</label>
+                    <div class="input-icon">
+                        <span>🎂</span>
+                        <input type="number" th:field="*{age}"
+                               placeholder="Age" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <div class="input-icon">
+                        <span>⚧</span>
+                        <select th:field="*{gender}">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Gender</label>
-                <select th:field="*{gender}">
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
+
             <div class="form-group">
                 <label>Phone Number</label>
-                <input type="text" th:field="*{phone}" placeholder="Enter phone number" required/>
+                <div class="input-icon">
+                    <span>📱</span>
+                    <input type="text" th:field="*{phone}"
+                           placeholder="Enter phone number" required/>
+                </div>
             </div>
+
+            <hr class="form-divider"/>
+
+            <!-- Account Information -->
+            <div class="form-section-title">
+                🔐 Account Information
+            </div>
+
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" th:field="*{password}" placeholder="Set a password" required/>
+                <div class="input-icon">
+                    <span>🔒</span>
+                    <input type="password" th:field="*{password}"
+                           placeholder="Set a password" required/>
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Status</label>
-                <select th:field="*{status}">
-                    <option value="Approved">Approved</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Rejected">Rejected</option>
-                </select>
+                <label>Account Status</label>
+                <div class="input-icon">
+                    <span>✅</span>
+                    <select th:field="*{status}">
+                        <option value="Approved">Approved</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
             </div>
-            <button type="submit" class="btn btn-success">Add Patient</button>
-            <a href="/patients" class="btn btn-danger" style="margin-left:10px;">Cancel</a>
+
+            <hr class="form-divider"/>
+
+            <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn btn-success"
+                        style="flex:1; padding:13px;">
+                    ✅ Add Patient
+                </button>
+                <a href="/patients" class="btn btn-danger"
+                   style="padding:13px 20px;">Cancel</a>
+            </div>
         </form>
     </div>
 </div>
