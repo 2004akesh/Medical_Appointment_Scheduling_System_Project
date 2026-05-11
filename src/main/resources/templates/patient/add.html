@@ -38,11 +38,6 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
-        .form-group label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
         .input-icon {
             position: relative;
         }
@@ -70,6 +65,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+        .error-msg {
+            color: #c62828;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
         }
     </style>
 </head>
@@ -110,28 +111,45 @@
         </div>
 
         <form th:action="@{/patients/add}" th:object="${patient}"
-              method="post" autocomplete="off">
+              method="post" autocomplete="off"
+              onsubmit="return validateForm()">
+
             <!-- Personal Information -->
             <div class="form-section-title">
                 📋 Personal Information
             </div>
 
+            <!-- Name -->
             <div class="form-group">
                 <label>Full Name</label>
                 <div class="input-icon">
                     <span>👤</span>
                     <input type="text" th:field="*{name}"
-                           placeholder="Enter patient full name" required/>
+                           placeholder="Enter patient full name"
+                           id="nameInput"
+                           oninput="validateName()"
+                           required/>
+                </div>
+                <div id="nameError" class="error-msg">
+                    ⚠️ Name must contain only letters and spaces (min 2 characters)
                 </div>
             </div>
 
+            <!-- Age and Gender -->
             <div class="form-row">
                 <div class="form-group">
                     <label>Age</label>
                     <div class="input-icon">
                         <span>🎂</span>
                         <input type="number" th:field="*{age}"
-                               placeholder="Age" required/>
+                               placeholder="Age"
+                               id="ageInput"
+                               oninput="validateAge()"
+                               min="1" max="120"
+                               required/>
+                    </div>
+                    <div id="ageError" class="error-msg">
+                        ⚠️ Age must be between 1 and 120
                     </div>
                 </div>
                 <div class="form-group">
@@ -146,12 +164,19 @@
                 </div>
             </div>
 
+            <!-- Phone -->
             <div class="form-group">
                 <label>Phone Number</label>
                 <div class="input-icon">
                     <span>📱</span>
                     <input type="text" th:field="*{phone}"
-                           placeholder="Enter phone number" required/>
+                           placeholder="Enter phone number"
+                           id="phoneInput"
+                           oninput="validatePhone()"
+                           required/>
+                </div>
+                <div id="phoneError" class="error-msg">
+                    ⚠️ Phone number must be exactly 10 digits
                 </div>
             </div>
 
@@ -162,17 +187,24 @@
                 🔐 Account Information
             </div>
 
+            <!-- Password -->
             <div class="form-group">
                 <label>Password</label>
                 <div class="input-icon">
                     <span>🔒</span>
                     <input type="password" th:field="*{password}"
                            placeholder="Set a password"
+                           id="passwordInput"
+                           oninput="validatePassword()"
                            autocomplete="new-password"
                            required/>
                 </div>
+                <div id="passwordError" class="error-msg">
+                    ⚠️ Password must be at least 6 characters
+                </div>
             </div>
 
+            <!-- Status -->
             <div class="form-group">
                 <label>Account Status</label>
                 <div class="input-icon">
@@ -198,5 +230,75 @@
         </form>
     </div>
 </div>
+
+<script>
+    function validateName() {
+        const input = document.getElementById('nameInput');
+        const error = document.getElementById('nameError');
+        const letters = /^[A-Za-z\s]+$/;
+        if (!letters.test(input.value) || input.value.trim().length < 2) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validateAge() {
+        const input = document.getElementById('ageInput');
+        const error = document.getElementById('ageError');
+        const age = parseInt(input.value);
+        if (isNaN(age) || age < 1 || age > 120) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePhone() {
+        const input = document.getElementById('phoneInput');
+        const error = document.getElementById('phoneError');
+        const digits = /^[0-9]{10}$/;
+        if (!digits.test(input.value)) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePassword() {
+        const input = document.getElementById('passwordInput');
+        const error = document.getElementById('passwordError');
+        if (input.value.length < 6) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validateForm() {
+        const nameValid = validateName();
+        const ageValid = validateAge();
+        const phoneValid = validatePhone();
+        const passwordValid = validatePassword();
+        return nameValid && ageValid && phoneValid && passwordValid;
+    }
+</script>
+
 </body>
 </html>
