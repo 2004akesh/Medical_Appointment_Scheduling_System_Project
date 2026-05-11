@@ -109,8 +109,8 @@
             </div>
         </div>
 
-        <form th:action="@{/patients/add}" th:object="${patient}"
-              method="post" autocomplete="off">
+        <form th:action="@{/patients/add}" th:object="${patient}" method="post">
+
             <!-- Personal Information -->
             <div class="form-section-title">
                 📋 Personal Information
@@ -167,9 +167,7 @@
                 <div class="input-icon">
                     <span>🔒</span>
                     <input type="password" th:field="*{password}"
-                           placeholder="Set a password"
-                           autocomplete="new-password"
-                           required/>
+                           placeholder="Set a password" required/>
                 </div>
             </div>
 
