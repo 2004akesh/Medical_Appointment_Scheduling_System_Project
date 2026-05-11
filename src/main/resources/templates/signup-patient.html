@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Patient Sign Up - HealthCare</title>
     <style>
@@ -8,9 +8,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             background: linear-gradient(135deg, #0a2342 0%, #1976d2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .container {
             display: grid;
@@ -68,7 +65,6 @@
         .info-card-icon { font-size: 24px; }
         .info-card h4 { color: white; font-size: 14px; font-weight: 700; }
         .info-card p { color: rgba(255,255,255,0.65); font-size: 12px; margin-top: 2px; }
-
         .right-side {
             background: #f0f4f8;
             display: flex;
@@ -174,7 +170,12 @@
             align-items: center;
             gap: 8px;
         }
-
+        .error-msg {
+            color: #c62828;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -193,7 +194,7 @@
             </div>
         </a>
         <h2>Patient<br/><span>Registration</span></h2>
-        <p>Join our healthcare system and get access to qualified doctors, easy appointment booking and more.</p>
+        <p>Join our healthcare system and get access to qualified doctors and easy appointment booking.</p>
         <div class="info-cards">
             <div class="info-card">
                 <span class="info-card-icon">📅</span>
@@ -206,7 +207,7 @@
                 <span class="info-card-icon">🩺</span>
                 <div>
                     <h4>Expert Doctors</h4>
-                    <p>Access to doctors across multiple specializations</p>
+                    <p>Access doctors across multiple specializations</p>
                 </div>
             </div>
             <div class="info-card">
@@ -219,7 +220,7 @@
             <div class="info-card">
                 <span class="info-card-icon">🔒</span>
                 <div>
-                    <h4>Secure & Private</h4>
+                    <h4>Secure and Private</h4>
                     <p>Your health data is safe with us</p>
                 </div>
             </div>
@@ -232,23 +233,42 @@
             <a href="/signup" class="back-btn">← Back to Sign Up options</a>
 
             <h2>👤 Patient Sign Up</h2>
-            <p class="subtitle">Fill in your details. Admin will review and approve your account.</p>
+            <p class="subtitle">Fill in your details to create your account</p>
 
             <div class="note-box">
                 ℹ️ Your <strong>phone number</strong> will be used as your login username
             </div>
 
-            <form th:action="@{/signup/patient}" th:object="${patient}" method="post">
+            <form th:action="@{/signup/patient}" th:object="${patient}"
+                  method="post" autocomplete="off"
+                  onsubmit="return validateForm()">
+
+                <!-- Name -->
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" th:field="*{name}"
-                           placeholder="Enter your full name" required/>
+                           placeholder="Enter your full name"
+                           id="nameInput"
+                           oninput="validateName()"
+                           required/>
+                    <div id="nameError" class="error-msg">
+                        ⚠️ Name must contain only letters and spaces (min 2 characters)
+                    </div>
                 </div>
+
+                <!-- Age and Gender -->
                 <div class="form-row">
                     <div class="form-group">
                         <label>Age</label>
                         <input type="number" th:field="*{age}"
-                               placeholder="Your age" required/>
+                               placeholder="Your age"
+                               id="ageInput"
+                               oninput="validateAge()"
+                               min="1" max="120"
+                               required/>
+                        <div id="ageError" class="error-msg">
+                            ⚠️ Age must be between 1 and 120
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Gender</label>
@@ -258,16 +278,34 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Phone -->
                 <div class="form-group">
                     <label>Phone Number (Login Username)</label>
                     <input type="text" th:field="*{phone}"
-                           placeholder="Enter your phone number" required/>
+                           placeholder="Enter your phone number"
+                           id="phoneInput"
+                           oninput="validatePhone()"
+                           required/>
+                    <div id="phoneError" class="error-msg">
+                        ⚠️ Phone number must be exactly 10 digits
+                    </div>
                 </div>
+
+                <!-- Password -->
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" th:field="*{password}"
-                           placeholder="Create a strong password" required/>
+                           placeholder="Create a strong password"
+                           id="passwordInput"
+                           oninput="validatePassword()"
+                           autocomplete="new-password"
+                           required/>
+                    <div id="passwordError" class="error-msg">
+                        ⚠️ Password must be at least 6 characters
+                    </div>
                 </div>
+
                 <button type="submit" class="submit-btn">
                     Submit Registration →
                 </button>
@@ -279,5 +317,75 @@
         </div>
     </div>
 </div>
+
+<script>
+    function validateName() {
+        const input = document.getElementById('nameInput');
+        const error = document.getElementById('nameError');
+        const letters = /^[A-Za-z\s]+$/;
+        if (!letters.test(input.value) || input.value.trim().length < 2) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validateAge() {
+        const input = document.getElementById('ageInput');
+        const error = document.getElementById('ageError');
+        const age = parseInt(input.value);
+        if (isNaN(age) || age < 1 || age > 120) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePhone() {
+        const input = document.getElementById('phoneInput');
+        const error = document.getElementById('phoneError');
+        const digits = /^[0-9]{10}$/;
+        if (!digits.test(input.value)) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePassword() {
+        const input = document.getElementById('passwordInput');
+        const error = document.getElementById('passwordError');
+        if (input.value.length < 6) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validateForm() {
+        const nameValid = validateName();
+        const ageValid = validateAge();
+        const phoneValid = validatePhone();
+        const passwordValid = validatePassword();
+        return nameValid && ageValid && phoneValid && passwordValid;
+    }
+</script>
+
 </body>
 </html>
