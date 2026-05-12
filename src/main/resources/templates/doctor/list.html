@@ -51,7 +51,6 @@
       <p style="color:#888; font-size:12px; margin-top:4px;">Rejected</p>
     </div>
   </div>
-  <!-- SEARCH BAR -->
   <div style="display:flex; gap:10px; margin-bottom:20px; align-items:center;">
     <input type="text" id="searchInput"
            placeholder="🔍 Search by doctor name..."
@@ -61,15 +60,50 @@
                   width:300px; transition:border 0.3s ease;"
            onfocus="this.style.borderColor='#1976d2'"
            onblur="this.style.borderColor='#e0e0e0'"/>
+    <select id="specializationFilter" onchange="filterDoctors()"
+            style="padding:10px 15px; border:2px solid #e0e0e0;
+                   border-radius:8px; font-size:14px; outline:none;
+                   transition:border 0.3s ease;"
+            onfocus="this.style.borderColor='#1976d2'"
+            onblur="this.style.borderColor='#e0e0e0'">
+      <option value="">All Specializations</option>
+      <option value="Cardiologist">❤️ Cardiologist</option>
+      <option value="Dermatologist">🧴 Dermatologist</option>
+      <option value="Neurologist">🧠 Neurologist</option>
+      <option value="Pediatrician">👶 Pediatrician</option>
+      <option value="Surgeon">🔪 Surgeon</option>
+      <option value="General Practitioner">🩺 General Practitioner</option>
+    </select>
+    <select id="statusFilter" onchange="filterDoctors()"
+            style="padding:10px 15px; border:2px solid #e0e0e0;
+                   border-radius:8px; font-size:14px; outline:none;
+                   transition:border 0.3s ease;"
+            onfocus="this.style.borderColor='#1976d2'"
+            onblur="this.style.borderColor='#e0e0e0'">
+      <option value="">All Status</option>
+      <option value="Approved">✅ Approved</option>
+      <option value="Pending">⏳ Pending</option>
+      <option value="Rejected">❌ Rejected</option>
+    </select>
   </div>
 
   <script>
     function filterDoctors() {
       const search = document.getElementById('searchInput').value.toLowerCase();
+      const specialization = document.getElementById('specializationFilter').value;
+      const status = document.getElementById('statusFilter').value;
       const rows = document.querySelectorAll('.doctor-row');
+
       rows.forEach(row => {
         const name = row.getAttribute('data-name').toLowerCase();
-        row.style.display = name.includes(search) ? '' : 'none';
+        const rowSpec = row.getAttribute('data-specialization');
+        const rowStatus = row.getAttribute('data-status');
+
+        const matchName = name.includes(search);
+        const matchSpec = specialization === '' || rowSpec === specialization;
+        const matchStatus = status === '' || rowStatus === status;
+
+        row.style.display = (matchName && matchSpec && matchStatus) ? '' : 'none';
       });
     }
   </script>
@@ -83,7 +117,9 @@
       <tbody>
       <tr th:each="doctor : ${doctors}"
           class="doctor-row"
-          th:attr="data-name=${doctor.name}">
+          th:attr="data-name=${doctor.name},
+             data-specialization=${doctor.specialization},
+             data-status=${doctor.status}">
         <td><span class="badge badge-blue" th:text="${doctor.id}"></span></td>
         <td th:text="${doctor.name}"></td>
         <td th:text="${doctor.phone}"></td>
