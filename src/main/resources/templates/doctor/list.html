@@ -51,6 +51,28 @@
       <p style="color:#888; font-size:12px; margin-top:4px;">Rejected</p>
     </div>
   </div>
+  <!-- SEARCH BAR -->
+  <div style="display:flex; gap:10px; margin-bottom:20px; align-items:center;">
+    <input type="text" id="searchInput"
+           placeholder="🔍 Search by doctor name..."
+           onkeyup="filterDoctors()"
+           style="padding:10px 15px; border:2px solid #e0e0e0;
+                  border-radius:8px; font-size:14px; outline:none;
+                  width:300px; transition:border 0.3s ease;"
+           onfocus="this.style.borderColor='#1976d2'"
+           onblur="this.style.borderColor='#e0e0e0'"/>
+  </div>
+
+  <script>
+    function filterDoctors() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('.doctor-row');
+      rows.forEach(row => {
+        const name = row.getAttribute('data-name').toLowerCase();
+        row.style.display = name.includes(search) ? '' : 'none';
+      });
+    }
+  </script>
   <div class="card">
     <table>
       <thead>
@@ -59,7 +81,9 @@
       </tr>
       </thead>
       <tbody>
-      <tr th:each="doctor : ${doctors}">
+      <tr th:each="doctor : ${doctors}"
+          class="doctor-row"
+          th:attr="data-name=${doctor.name}">
         <td><span class="badge badge-blue" th:text="${doctor.id}"></span></td>
         <td th:text="${doctor.name}"></td>
         <td th:text="${doctor.phone}"></td>
