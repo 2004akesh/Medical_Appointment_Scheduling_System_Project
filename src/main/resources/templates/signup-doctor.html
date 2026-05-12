@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Doctor Sign Up - HealthCare</title>
     <style>
@@ -8,9 +8,6 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .container {
             display: grid;
@@ -68,7 +65,6 @@
         .info-card-icon { font-size: 24px; }
         .info-card h4 { color: white; font-size: 14px; font-weight: 700; }
         .info-card p { color: rgba(255,255,255,0.65); font-size: 12px; margin-top: 2px; }
-
         .right-side {
             background: #f0f4f8;
             display: flex;
@@ -174,7 +170,12 @@
             align-items: center;
             gap: 8px;
         }
-
+        .error-msg {
+            color: #c62828;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -232,23 +233,43 @@
             <a href="/signup" class="back-btn">← Back to Sign Up options</a>
 
             <h2>🩺 Doctor Sign Up</h2>
-            <p class="subtitle">Fill in your details. Admin will review and approve your account.</p>
+            <p class="subtitle">Fill in your details to create your account</p>
 
             <div class="note-box">
                 ℹ️ Your <strong>full name</strong> will be used as your login username
             </div>
 
-            <form th:action="@{/signup/doctor}" th:object="${doctor}" method="post">
+            <form th:action="@{/signup/doctor}" th:object="${doctor}"
+                  method="post" autocomplete="off"
+                  onsubmit="return validateForm()">
+
+                <!-- Name -->
                 <div class="form-group">
                     <label>Full Name (Login Username)</label>
                     <input type="text" th:field="*{name}"
-                           placeholder="Enter your full name" required/>
+                           placeholder="Enter your full name"
+                           id="nameInput"
+                           oninput="validateName()"
+                           required/>
+                    <div id="nameError" class="error-msg">
+                        ⚠️ Name must contain only letters and spaces (min 2 characters)
+                    </div>
                 </div>
+
+                <!-- Phone -->
                 <div class="form-group">
                     <label>Phone Number</label>
                     <input type="text" th:field="*{phone}"
-                           placeholder="Enter your phone number" required/>
+                           placeholder="Enter your phone number"
+                           id="phoneInput"
+                           oninput="validatePhone()"
+                           required/>
+                    <div id="phoneError" class="error-msg">
+                        ⚠️ Phone number must be exactly 10 digits
+                    </div>
                 </div>
+
+                <!-- Specialization and Availability -->
                 <div class="form-row">
                     <div class="form-group">
                         <label>Specialization</label>
@@ -271,11 +292,21 @@
                         </select>
                     </div>
                 </div>
+
+                <!-- Password -->
                 <div class="form-group">
                     <label>Password</label>
                     <input type="password" th:field="*{password}"
-                           placeholder="Create a strong password" required/>
+                           placeholder="Create a strong password"
+                           id="passwordInput"
+                           oninput="validatePassword()"
+                           autocomplete="new-password"
+                           required/>
+                    <div id="passwordError" class="error-msg">
+                        ⚠️ Password must be at least 6 characters
+                    </div>
                 </div>
+
                 <button type="submit" class="submit-btn">
                     Submit Registration →
                 </button>
@@ -287,5 +318,59 @@
         </div>
     </div>
 </div>
+
+<script>
+    function validateName() {
+        const input = document.getElementById('nameInput');
+        const error = document.getElementById('nameError');
+        const letters = /^[A-Za-z\s]+$/;
+        if (!letters.test(input.value) || input.value.trim().length < 2) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePhone() {
+        const input = document.getElementById('phoneInput');
+        const error = document.getElementById('phoneError');
+        const digits = /^[0-9]{10}$/;
+        if (!digits.test(input.value)) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePassword() {
+        const input = document.getElementById('passwordInput');
+        const error = document.getElementById('passwordError');
+        if (input.value.length < 6) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validateForm() {
+        const nameValid = validateName();
+        const phoneValid = validatePhone();
+        const passwordValid = validatePassword();
+        return nameValid && phoneValid && passwordValid;
+    }
+</script>
+
 </body>
 </html>
