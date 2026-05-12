@@ -1,75 +1,320 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Edit Doctor</title>
     <link rel="stylesheet" th:href="@{/style.css}"/>
+    <style>
+        .form-header {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .form-header-icon {
+            width: 55px;
+            height: 55px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+        .form-header h2 {
+            color: white;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .form-header p {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .input-icon {
+            position: relative;
+        }
+        .input-icon span {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+        .input-icon input,
+        .input-icon select {
+            padding-left: 38px !important;
+        }
+        .form-divider {
+            border: none;
+            border-top: 2px solid #f0f4f8;
+            margin: 20px 0;
+        }
+        .form-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0a2342;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .error-msg {
+            color: #c62828;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        .doctor-id-box {
+            background: #f0f4f8;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #555;
+        }
+        .doctor-id-box strong { color: #0a2342; }
+    </style>
 </head>
 <body>
 <div class="navbar">
     <a class="logo" href="/home/admin">🏥 HealthCare <span>Management System</span></a>
     <nav>
-        <a href="/home/admin"><span>🏠</span> Home</a>
-        <a href="/patients"><span>👤</span> Patients</a>
-        <a href="/doctors" class="active"><span>🩺</span> Doctors</a>
-        <a href="/appointments"><span>📅</span> Appointments</a>
-        <a href="/scheduling"><span>🗓️</span> Scheduling</a>
-        <a href="/feedback"><span>💬</span> Feedback</a>
-        <a href="/admin"><span>⚙️</span> Admin</a>
-        <a href="/admin/requests"><span>🔔</span> Requests</a>
-        <a href="/logout" class="logout-btn"><span>🚪</span> Logout</a>
+        <a href="/home/admin">🏠 Home</a>
+        <a href="/patients">👤 Patients</a>
+        <a href="/doctors" class="active">🩺 Doctors</a>
+        <a href="/appointments">📅 Appointments</a>
+        <a href="/scheduling">🗓️ Scheduling</a>
+        <a href="/feedback">💬 Feedback</a>
+        <a href="/admin">⚙️ Admin</a>
+        <a href="/admin/requests">🔔 Requests</a>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
     </nav>
 </div>
+
 <div class="main-content">
     <div class="page-header">
-        <div><h1>Edit Doctor</h1><p>Update doctor information</p></div>
+        <div>
+            <h1>Edit Doctor</h1>
+            <p>Update doctor information</p>
+        </div>
         <a href="/doctors" class="btn btn-primary">← Back to List</a>
     </div>
-    <div class="card" style="max-width: 600px;">
-        <form th:action="@{/doctors/edit/{id}(id=${doctor.id})}" th:object="${doctor}" method="post">
+
+    <div class="card" style="max-width: 650px;">
+
+        <!-- Form Header -->
+        <div class="form-header">
+            <div class="form-header-icon">✏️</div>
+            <div>
+                <h2>Edit Doctor Details</h2>
+                <p>Update the doctor's professional information</p>
+            </div>
+        </div>
+
+        <!-- Doctor ID Box -->
+        <div class="doctor-id-box">
+            <span style="font-size:20px;">🆔</span>
+            <span>Doctor ID: <strong th:text="${doctor.id}"></strong></span>
+            <span class="badge"
+                  th:classappend="${doctor.status == 'Approved'} ? 'badge-green' :
+                                  (${doctor.status == 'Pending'} ? 'badge-orange' : 'badge-red')"
+                  th:text="${doctor.status}"
+                  style="margin-left:auto;"></span>
+        </div>
+
+        <form th:action="@{/doctors/edit/{id}(id=${doctor.id})}"
+              th:object="${doctor}" method="post"
+              autocomplete="off"
+              onsubmit="return validateForm()">
+
+            <!-- Personal Information -->
+            <div class="form-section-title">
+                📋 Personal Information
+            </div>
+
+            <!-- Name -->
             <div class="form-group">
                 <label>Full Name</label>
-                <input type="text" th:field="*{name}" required/>
+                <div class="input-icon">
+                    <span>🩺</span>
+                    <input type="text" th:field="*{name}"
+                           placeholder="Enter doctor full name"
+                           id="nameInput"
+                           oninput="validateName()"
+                           required/>
+                </div>
+                <div id="nameError" class="error-msg">
+                    ⚠️ Name must contain only letters and spaces (min 2 characters)
+                </div>
             </div>
+
+            <!-- Phone -->
             <div class="form-group">
                 <label>Phone Number</label>
-                <input type="text" th:field="*{phone}" required/>
+                <div class="input-icon">
+                    <span>📱</span>
+                    <input type="text" th:field="*{phone}"
+                           placeholder="Enter phone number"
+                           id="phoneInput"
+                           oninput="validatePhone()"
+                           required/>
+                </div>
+                <div id="phoneError" class="error-msg">
+                    ⚠️ Phone number must be exactly 10 digits
+                </div>
             </div>
-            <div class="form-group">
-                <label>Specialization</label>
-                <select th:field="*{specialization}">
-                    <option value="Cardiologist">Cardiologist</option>
-                    <option value="Dermatologist">Dermatologist</option>
-                    <option value="Neurologist">Neurologist</option>
-                    <option value="Pediatrician">Pediatrician</option>
-                    <option value="Surgeon">Surgeon</option>
-                    <option value="General Practitioner">General Practitioner</option>
-                </select>
+
+            <hr class="form-divider"/>
+
+            <!-- Professional Information -->
+            <div class="form-section-title">
+                🏥 Professional Information
             </div>
-            <div class="form-group">
-                <label>Availability</label>
-                <select th:field="*{availability}">
-                    <option value="Monday - Friday">Monday - Friday</option>
-                    <option value="Monday - Saturday">Monday - Saturday</option>
-                    <option value="Weekends Only">Weekends Only</option>
-                    <option value="On Call">On Call</option>
-                </select>
+
+            <!-- Specialization and Availability -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Specialization</label>
+                    <div class="input-icon">
+                        <span>🔬</span>
+                        <select th:field="*{specialization}">
+                            <option value="Cardiologist">Cardiologist</option>
+                            <option value="Dermatologist">Dermatologist</option>
+                            <option value="Neurologist">Neurologist</option>
+                            <option value="Pediatrician">Pediatrician</option>
+                            <option value="Surgeon">Surgeon</option>
+                            <option value="General Practitioner">General Practitioner</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Availability</label>
+                    <div class="input-icon">
+                        <span>📅</span>
+                        <select th:field="*{availability}">
+                            <option value="Monday - Friday">Monday - Friday</option>
+                            <option value="Monday - Saturday">Monday - Saturday</option>
+                            <option value="Weekends Only">Weekends Only</option>
+                            <option value="On Call">On Call</option>
+                        </select>
+                    </div>
+                </div>
             </div>
+
+            <hr class="form-divider"/>
+
+            <!-- Account Information -->
+            <div class="form-section-title">
+                🔐 Account Information
+            </div>
+
+            <!-- Password -->
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" th:field="*{password}" required/>
+                <div class="input-icon">
+                    <span>🔒</span>
+                    <input type="password" th:field="*{password}"
+                           placeholder="Enter new password"
+                           id="passwordInput"
+                           oninput="validatePassword()"
+                           autocomplete="new-password"
+                           required/>
+                </div>
+                <div id="passwordError" class="error-msg">
+                    ⚠️ Password must be at least 6 characters
+                </div>
             </div>
+
+            <!-- Status -->
             <div class="form-group">
-                <label>Status</label>
-                <select th:field="*{status}">
-                    <option value="Approved">Approved</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Rejected">Rejected</option>
-                </select>
+                <label>Account Status</label>
+                <div class="input-icon">
+                    <span>✅</span>
+                    <select th:field="*{status}">
+                        <option value="Approved">Approved</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
             </div>
-            <button type="submit" class="btn btn-success">Update Doctor</button>
-            <a href="/doctors" class="btn btn-danger" style="margin-left:10px;">Cancel</a>
+
+            <hr class="form-divider"/>
+
+            <div style="display:flex; gap:10px;">
+                <button type="submit" class="btn btn-success"
+                        style="flex:1; padding:13px;">
+                    ✅ Update Doctor
+                </button>
+                <a href="/doctors" class="btn btn-danger"
+                   style="padding:13px 20px;">Cancel</a>
+            </div>
         </form>
     </div>
 </div>
+
+<script>
+    function validateName() {
+        const input = document.getElementById('nameInput');
+        const error = document.getElementById('nameError');
+        const letters = /^[A-Za-z\s]+$/;
+        if (!letters.test(input.value) || input.value.trim().length < 2) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePhone() {
+        const input = document.getElementById('phoneInput');
+        const error = document.getElementById('phoneError');
+        const digits = /^[0-9]{10}$/;
+        if (!digits.test(input.value)) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validatePassword() {
+        const input = document.getElementById('passwordInput');
+        const error = document.getElementById('passwordError');
+        if (input.value.length < 6) {
+            input.style.borderColor = '#c62828';
+            error.style.display = 'block';
+            return false;
+        } else {
+            input.style.borderColor = '#2e7d32';
+            error.style.display = 'none';
+            return true;
+        }
+    }
+
+    function validateForm() {
+        const nameValid = validateName();
+        const phoneValid = validatePhone();
+        const passwordValid = validatePassword();
+        return nameValid && phoneValid && passwordValid;
+    }
+</script>
+
 </body>
 </html>
