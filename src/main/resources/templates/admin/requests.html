@@ -1,73 +1,225 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Pending Requests</title>
+    <title>Pending Requests - HealthCare</title>
     <link rel="stylesheet" th:href="@{/style.css}"/>
+    <style>
+        .request-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .request-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        .request-card.doctor {
+            border-left: 5px solid #2e7d32;
+        }
+        .request-card.patient {
+            border-left: 5px solid #1976d2;
+        }
+        .request-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .request-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+        .request-icon.doctor { background: #e8f5e9; }
+        .request-icon.patient { background: #e3f2fd; }
+        .request-details h4 {
+            color: #0a2342;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .request-details p {
+            color: #888;
+            font-size: 12px;
+        }
+        .request-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+        .section-header h2 {
+            font-size: 20px;
+            color: #0a2342;
+            font-weight: 800;
+        }
+        .count-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 16px;
+            color: #aaa;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
 <div class="navbar">
-    <a class="logo" href="/home/admin">🏥 HealthCare <span>Management System</span></a>
+    <a class="logo" href="#">🏥 HealthCare <span>Management System</span></a>
     <nav>
-        <a href="/home/admin"><span>🏠</span> Home</a>
-        <a href="/patients"><span>👤</span> Patients</a>
-        <a href="/doctors"><span>🩺</span> Doctors</a>
-        <a href="/appointments"><span>📅</span> Appointments</a>
-        <a href="/scheduling"><span>🗓️</span> Scheduling</a>
-        <a href="/feedback"><span>💬</span> Feedback</a>
-        <a href="/admin"><span>⚙️</span> Admin</a>
-        <a href="/admin/requests" class="active"><span>🔔</span> Requests</a>
-        <a href="/logout" class="logout-btn"><span>🚪</span> Logout</a>
+        <a href="/home/admin">🏠 Home</a>
+        <a href="/patients">👤 Patients</a>
+        <a href="/doctors">🩺 Doctors</a>
+        <a href="/appointments">📅 Appointments</a>
+        <a href="/scheduling">🗓️ Scheduling</a>
+        <a href="/feedback">💬 Feedback</a>
+        <a href="/admin">⚙️ Admin</a>
+        <a href="/admin/requests" class="active">🔔 Requests</a>
+        <a href="/logout" class="logout-btn">🚪 Logout</a>
     </nav>
 </div>
+
 <div class="main-content">
     <div class="page-header">
-        <div><h1>Pending Requests 🔔</h1><p>Approve or reject doctor and patient registrations</p></div>
+        <div>
+            <h1>🔔 Pending Requests</h1>
+            <p>Review and approve or reject doctor and patient registrations</p>
+        </div>
     </div>
-    <div class="card" style="margin-bottom: 30px;">
-        <h3 style="color:#0a2342; margin-bottom:15px;">🩺 Pending Doctor Requests</h3>
-        <table>
-            <thead>
-            <tr><th>Name</th><th>Phone</th><th>Specialization</th><th>Availability</th><th>Actions</th></tr>
-            </thead>
-            <tbody>
-            <tr th:each="d : ${pendingDoctors}">
-                <td th:text="${d.name}"></td>
-                <td th:text="${d.phone}"></td>
-                <td><span class="badge badge-blue" th:text="${d.specialization}"></span></td>
-                <td th:text="${d.availability}"></td>
-                <td>
-                    <a th:href="@{/admin/approve/doctor/{id}(id=${d.id})}" class="btn btn-success" style="padding:6px 14px; font-size:12px;">✅ Approve</a>
-                    <a th:href="@{/admin/reject/doctor/{id}(id=${d.id})}" class="btn btn-danger" style="padding:6px 14px; font-size:12px;">❌ Reject</a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(pendingDoctors)}">
-                <td colspan="5" style="text-align:center; color:#888;">No pending doctor requests</td>
-            </tr>
-            </tbody>
-        </table>
+
+    <!-- STATS BAR -->
+    <div style="display:flex; gap:20px; margin-bottom:25px;">
+        <div style="background:white; border-radius:12px; padding:15px 20px;
+                    box-shadow:0 4px 15px rgba(0,0,0,0.07); text-align:center; flex:1;">
+            <h3 style="font-size:24px; color:#e65100; font-weight:800;"
+                th:text="${#lists.size(pendingDoctors) + #lists.size(pendingPatients)}">0</h3>
+            <p style="color:#888; font-size:12px; margin-top:4px;">Total Pending</p>
+        </div>
+        <div style="background:white; border-radius:12px; padding:15px 20px;
+                    box-shadow:0 4px 15px rgba(0,0,0,0.07); text-align:center; flex:1;">
+            <h3 style="font-size:24px; color:#2e7d32; font-weight:800;"
+                th:text="${#lists.size(pendingDoctors)}">0</h3>
+            <p style="color:#888; font-size:12px; margin-top:4px;">Pending Doctors</p>
+        </div>
+        <div style="background:white; border-radius:12px; padding:15px 20px;
+                    box-shadow:0 4px 15px rgba(0,0,0,0.07); text-align:center; flex:1;">
+            <h3 style="font-size:24px; color:#1976d2; font-weight:800;"
+                th:text="${#lists.size(pendingPatients)}">0</h3>
+            <p style="color:#888; font-size:12px; margin-top:4px;">Pending Patients</p>
+        </div>
     </div>
-    <div class="card">
-        <h3 style="color:#0a2342; margin-bottom:15px;">👤 Pending Patient Requests</h3>
-        <table>
-            <thead>
-            <tr><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Actions</th></tr>
-            </thead>
-            <tbody>
-            <tr th:each="p : ${pendingPatients}">
-                <td th:text="${p.name}"></td>
-                <td th:text="${p.age}"></td>
-                <td th:text="${p.gender}"></td>
-                <td th:text="${p.phone}"></td>
-                <td>
-                    <a th:href="@{/admin/approve/patient/{id}(id=${p.id})}" class="btn btn-success" style="padding:6px 14px; font-size:12px;">✅ Approve</a>
-                    <a th:href="@{/admin/reject/patient/{id}(id=${p.id})}" class="btn btn-danger" style="padding:6px 14px; font-size:12px;">❌ Reject</a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(pendingPatients)}">
-                <td colspan="5" style="text-align:center; color:#888;">No pending patient requests</td>
-            </tr>
-            </tbody>
-        </table>
+
+    <!-- PENDING DOCTORS -->
+    <div class="section-header">
+        <span style="font-size:28px;">🩺</span>
+        <h2>Pending Doctors</h2>
+        <span class="count-badge"
+              th:text="${#lists.size(pendingDoctors)} + ' pending'"></span>
+    </div>
+
+    <div th:if="${#lists.isEmpty(pendingDoctors)}" class="empty-state">
+        <div style="font-size:40px; margin-bottom:10px;">✅</div>
+        <p>No pending doctor requests!</p>
+    </div>
+
+    <div th:each="doctor : ${pendingDoctors}" class="request-card doctor">
+        <div class="request-info">
+            <div class="request-icon doctor">🩺</div>
+            <div class="request-details">
+                <h4 th:text="${doctor.name}"></h4>
+                <p>
+                    📱 <span th:text="${doctor.phone}"></span> |
+                    🔬 <span th:text="${doctor.specialization}"></span> |
+                    📅 <span th:text="${doctor.availability}"></span>
+                </p>
+                <p style="margin-top:4px;">
+                    🆔 <span th:text="${doctor.id}"></span>
+                </p>
+            </div>
+        </div>
+        <div class="request-actions">
+            <a th:href="@{/admin/approve/doctor/{id}(id=${doctor.id})}"
+               class="btn btn-success"
+               style="padding:8px 18px; font-size:13px;">
+                ✅ Approve
+            </a>
+            <a th:href="@{/admin/reject/doctor/{id}(id=${doctor.id})}"
+               class="btn btn-danger"
+               style="padding:8px 18px; font-size:13px;">
+                ❌ Reject
+            </a>
+        </div>
+    </div>
+
+    <!-- PENDING PATIENTS -->
+    <div class="section-header">
+        <span style="font-size:28px;">👤</span>
+        <h2>Pending Patients</h2>
+        <span class="count-badge"
+              th:text="${#lists.size(pendingPatients)} + ' pending'"></span>
+    </div>
+
+    <div th:if="${#lists.isEmpty(pendingPatients)}" class="empty-state">
+        <div style="font-size:40px; margin-bottom:10px;">✅</div>
+        <p>No pending patient requests!</p>
+    </div>
+
+    <div th:each="patient : ${pendingPatients}" class="request-card patient">
+        <div class="request-info">
+            <div class="request-icon patient">👤</div>
+            <div class="request-details">
+                <h4 th:text="${patient.name}"></h4>
+                <p>
+                    📱 <span th:text="${patient.phone}"></span> |
+                    🎂 Age: <span th:text="${patient.age}"></span> |
+                    ⚧ <span th:text="${patient.gender}"></span>
+                </p>
+                <p style="margin-top:4px;">
+                    🆔 <span th:text="${patient.id}"></span>
+                </p>
+            </div>
+        </div>
+        <div class="request-actions">
+            <a th:href="@{/admin/approve/patient/{id}(id=${patient.id})}"
+               class="btn btn-success"
+               style="padding:8px 18px; font-size:13px;">
+                ✅ Approve
+            </a>
+            <a th:href="@{/admin/reject/patient/{id}(id=${patient.id})}"
+               class="btn btn-danger"
+               style="padding:8px 18px; font-size:13px;">
+                ❌ Reject
+            </a>
+        </div>
     </div>
 </div>
 </body>
