@@ -17,9 +17,14 @@ public class AdminController {
     @Autowired private PatientService patientService;
 
     @GetMapping
-    public String list(HttpSession session, Model model) {
-        if (!"ADMIN".equals(session.getAttribute("userRole"))) return "redirect:/login";
+    public String listAdmins(HttpSession session, Model model) {
+        if (!"ADMIN".equals(session.getAttribute("userRole")))
+            return "redirect:/login";
         model.addAttribute("admins", adminService.getAllAdmins());
+        model.addAttribute("pendingDoctors",
+                doctorService.getPendingDoctors().size());
+        model.addAttribute("pendingPatients",
+                patientService.getPendingPatients().size());
         return "admin/list";
     }
 
