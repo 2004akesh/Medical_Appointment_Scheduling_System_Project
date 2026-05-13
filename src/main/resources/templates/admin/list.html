@@ -45,13 +45,56 @@
             <p style="color:#888; font-size:12px; margin-top:4px;">Pending Patients</p>
         </div>
     </div>
+    <!-- SEARCH BAR -->
+    <div style="display:flex; gap:10px; margin-bottom:20px; align-items:center;">
+        <input type="text" id="searchInput"
+               placeholder="🔍 Search by admin name..."
+               onkeyup="filterAdmins()"
+               style="padding:10px 15px; border:2px solid #e0e0e0;
+                  border-radius:8px; font-size:14px; outline:none;
+                  width:300px; transition:border 0.3s ease;"
+               onfocus="this.style.borderColor='#1976d2'"
+               onblur="this.style.borderColor='#e0e0e0'"/>
+        <select id="roleFilter" onchange="filterAdmins()"
+                style="padding:10px 15px; border:2px solid #e0e0e0;
+                   border-radius:8px; font-size:14px; outline:none;
+                   transition:border 0.3s ease;"
+                onfocus="this.style.borderColor='#1976d2'"
+                onblur="this.style.borderColor='#e0e0e0'">
+            <option value="">All Roles</option>
+            <option value="Super Admin">⚙️ Super Admin</option>
+            <option value="Admin">👤 Admin</option>
+        </select>
+    </div>
+
+    <!-- Add this script before </body> -->
+    <script>
+        function filterAdmins() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const role = document.getElementById('roleFilter').value;
+            const rows = document.querySelectorAll('.admin-row');
+
+            rows.forEach(row => {
+                const name = row.getAttribute('data-name').toLowerCase();
+                const rowRole = row.getAttribute('data-role');
+
+                const matchName = name.includes(search);
+                const matchRole = role === '' || rowRole === role;
+
+                row.style.display = (matchName && matchRole) ? '' : 'none';
+            });
+        }
+    </script>
     <div class="card">
         <table>
             <thead>
             <tr><th>ID</th><th>Name</th><th>Phone</th><th>Username</th><th>Role</th><th>Actions</th></tr>
             </thead>
             <tbody>
-            <tr th:each="a : ${admins}">
+            <tr th:each="a : ${admins}"
+                class="admin-row"
+                th:attr="data-name=${a.name},
+             data-role=${a.role}">
                 <td><span class="badge badge-blue" th:text="${a.id}"></span></td>
                 <td th:text="${a.name}"></td>
                 <td th:text="${a.phone}"></td>
