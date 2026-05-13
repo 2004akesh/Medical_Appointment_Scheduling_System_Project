@@ -16,6 +16,7 @@ public class AdminService implements ManagementService<Admin> {
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
                 String[] p = line.split(",");
                 if (p.length == 6) {
                     list.add(new Admin(p[0], p[1], p[2], p[3], p[4], p[5]));
