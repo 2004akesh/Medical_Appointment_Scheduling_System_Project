@@ -50,8 +50,7 @@ public class AppointmentService implements ManagementService<Appointment> {
                                 a.getUrgency()).equals(urgency))
                         .collect(Collectors.toList());
 
-                // BUBBLE SORT - sort by time within same urgency
-                // Correctly handles AM/PM
+
                 int n = urgencyGroup.size();
                 for (int i = 0; i < n - 1; i++) {
                     for (int j = 0; j < n - i - 1; j++) {
@@ -81,15 +80,12 @@ public class AppointmentService implements ManagementService<Appointment> {
             for (int j = 0; j < n - i - 1; j++) {
                 boolean shouldSwap = false;
 
-                // Compare date first
                 int dateCompare = list.get(j).getDate()
                         .compareTo(list.get(j + 1).getDate());
 
                 if (dateCompare > 0) {
-                    // Earlier date first
                     shouldSwap = true;
                 } else if (dateCompare == 0) {
-                    // Same date - compare time with AM/PM
                     int time1 = convertToMinutes(list.get(j).getTimeSlot());
                     int time2 = convertToMinutes(list.get(j + 1).getTimeSlot());
                     if (time1 > time2) shouldSwap = true;
