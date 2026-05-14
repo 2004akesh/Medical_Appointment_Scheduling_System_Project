@@ -7,7 +7,6 @@ public class Schedule {
     private String startTime;
     private String endTime;
     private String roomNumber;
-    private int currentPatients;
     private String status;
     private int slotDuration;
 
@@ -15,19 +14,18 @@ public class Schedule {
 
     public Schedule(String id, String doctorName, String availableDays,
                     String startTime, String endTime, String roomNumber,
-                    int currentPatients, String status, int slotDuration) {
+                    String status, int slotDuration) {
         this.id = id;
         this.doctorName = doctorName;
         this.availableDays = availableDays;
         this.startTime = startTime;
         this.endTime = endTime;
         this.roomNumber = roomNumber;
-        this.currentPatients = currentPatients;
         this.status = status;
         this.slotDuration = slotDuration;
     }
 
-    // Auto calculate max patients
+    // Auto calculate max patients per day
     public int getMaxPatients() {
         try {
             java.time.LocalTime start = java.time.LocalTime.parse(
@@ -36,7 +34,8 @@ public class Schedule {
             java.time.LocalTime end = java.time.LocalTime.parse(
                     endTime.toUpperCase(),
                     java.time.format.DateTimeFormatter.ofPattern("hh:mm a"));
-            int totalMinutes = (int) java.time.Duration.between(start, end).toMinutes();
+            int totalMinutes = (int) java.time.Duration
+                    .between(start, end).toMinutes();
             return totalMinutes / slotDuration;
         } catch (Exception e) {
             return 0;
@@ -60,9 +59,6 @@ public class Schedule {
 
     public String getRoomNumber() { return roomNumber; }
     public void setRoomNumber(String roomNumber) { this.roomNumber = roomNumber; }
-
-    public int getCurrentPatients() { return currentPatients; }
-    public void setCurrentPatients(int currentPatients) { this.currentPatients = currentPatients; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
