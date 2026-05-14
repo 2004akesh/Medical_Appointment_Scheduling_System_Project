@@ -10,17 +10,20 @@ import java.util.*;
 @Service
 public class SchedulingService implements ManagementService<Schedule> {
 
-    private static final String FILE_PATH = "src/main/resources/data/schedules.txt";
+    private static final String FILE_PATH =
+            "src/main/resources/data/schedules.txt";
 
 
-    public List<String> generateTimeSlots(String startTime, String endTime,
-                                          int slotDuration) {
+    public List<String> generateTimeSlots(String startTime,
+                                          String endTime, int slotDuration) {
         List<String> slots = new ArrayList<>();
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a");
-            LocalTime start = LocalTime.parse(startTime.toUpperCase(), formatter);
-            LocalTime end = LocalTime.parse(endTime.toUpperCase(), formatter);
-
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("hh:mm a");
+            LocalTime start = LocalTime.parse(
+                    startTime.toUpperCase(), formatter);
+            LocalTime end = LocalTime.parse(
+                    endTime.toUpperCase(), formatter);
             while (start.isBefore(end)) {
                 slots.add(start.format(formatter));
                 start = start.plusMinutes(slotDuration);
@@ -31,20 +34,20 @@ public class SchedulingService implements ManagementService<Schedule> {
         return slots;
     }
 
-
+    // =============================================
+    // GET AVAILABLE SLOTS
+    // Removes already booked slots
+    // =============================================
     public List<String> getAvailableSlots(String doctorName,
                                           List<String> bookedSlots) {
         List<Schedule> schedules = getSchedulesByDoctor(doctorName);
         if (schedules.isEmpty()) return new ArrayList<>();
-
         Schedule schedule = schedules.get(0);
         List<String> allSlots = generateTimeSlots(
                 schedule.getStartTime(),
                 schedule.getEndTime(),
                 schedule.getSlotDuration()
         );
-
-        
         allSlots.removeAll(bookedSlots);
         return allSlots;
     }
@@ -64,14 +67,16 @@ public class SchedulingService implements ManagementService<Schedule> {
     @Override
     public List<Schedule> getAll() {
         List<Schedule> list = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
+        try (BufferedReader br = new BufferedReader(
+                new FileReader(FILE_PATH))) {
             String line;
             while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
                 String[] p = line.split(",");
-                if (p.length == 9) {
-                    list.add(new Schedule(p[0], p[1], p[2], p[3], p[4],
-                            p[5], Integer.parseInt(p[6]),
-                            p[7], Integer.parseInt(p[8])));
+                if (p.length == 8) {
+                    list.add(new Schedule(p[0], p[1], p[2], p[3],
+                            p[4], p[5], p[6],
+                            Integer.parseInt(p[7])));
                 }
             }
         } catch (IOException e) {}
@@ -82,12 +87,7 @@ public class SchedulingService implements ManagementService<Schedule> {
     public void save(Schedule s) {
         List<Schedule> list = getAll();
         s.setId(UUID.randomUUID().toString().substring(0, 8));
-        // Auto set status
-        if (s.getCurrentPatients() >= s.getMaxPatients()) {
-            s.setStatus("Full");
-        } else {
-            s.setStatus("Available");
-        }
+        s.setStatus("Available");
         list.add(s);
         writeAll(list);
     }
@@ -102,13 +102,8 @@ public class SchedulingService implements ManagementService<Schedule> {
                 s.setStartTime(updated.getStartTime());
                 s.setEndTime(updated.getEndTime());
                 s.setRoomNumber(updated.getRoomNumber());
-                s.setCurrentPatients(updated.getCurrentPatients());
                 s.setSlotDuration(updated.getSlotDuration());
-                if (s.getCurrentPatients() >= s.getMaxPatients()) {
-                    s.setStatus("Full");
-                } else {
-                    s.setStatus("Available");
-                }
+                s.setStatus(updated.getStatus());
             }
         }
         writeAll(list);
@@ -135,13 +130,13 @@ public class SchedulingService implements ManagementService<Schedule> {
     public Schedule getScheduleById(String id) { return getById(id); }
 
     private void writeAll(List<Schedule> list) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
+        try (BufferedWriter bw = new BufferedWriter(
+                new FileWriter(FILE_PATH))) {
             for (Schedule s : list) {
                 bw.write(s.getId() + "," + s.getDoctorName() + "," +
                         s.getAvailableDays() + "," + s.getStartTime() + "," +
                         s.getEndTime() + "," + s.getRoomNumber() + "," +
-                        s.getCurrentPatients() + "," + s.getStatus() + "," +
-                        s.getSlotDuration());
+                        s.getStatus() + "," + s.getSlotDuration());
                 bw.newLine();
             }
         } catch (IOException e) { e.printStackTrace(); }
