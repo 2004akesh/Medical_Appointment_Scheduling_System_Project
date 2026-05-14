@@ -24,11 +24,11 @@ public class SchedulingController {
 
         String role = (String) session.getAttribute("userRole");
         if ("DOCTOR".equals(role)) {
-
+            // Doctor sees only their own schedules
             String doctorName = (String) session.getAttribute("loggedInUser");
             model.addAttribute("schedules", schedulingService.getSchedulesByDoctor(doctorName));
         } else {
-
+            // Admin sees all schedules
             model.addAttribute("schedules", schedulingService.getAllSchedules());
         }
         return "scheduling/list";
@@ -38,7 +38,7 @@ public class SchedulingController {
     public String showAddForm(HttpSession session, Model model) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
         Schedule schedule = new Schedule();
-        
+        // If doctor, pre-fill their name
         if ("DOCTOR".equals(session.getAttribute("userRole"))) {
             schedule.setDoctorName((String) session.getAttribute("loggedInUser"));
         }
@@ -50,7 +50,7 @@ public class SchedulingController {
     @PostMapping("/add")
     public String add(HttpSession session, @ModelAttribute Schedule schedule) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
-        
+        // If doctor, always use their own name
         if ("DOCTOR".equals(session.getAttribute("userRole"))) {
             schedule.setDoctorName((String) session.getAttribute("loggedInUser"));
         }
