@@ -136,11 +136,6 @@
         }
         .empty-state div { font-size: 60px; margin-bottom: 10px; }
         .empty-state p { font-size: 15px; }
-        .slot-btn-selected {
-            border-color: #1976d2 !important;
-            background: #e3f2fd !important;
-            color: #1976d2 !important;
-        }
         .footer { background: #0a2342; color: rgba(255,255,255,0.6); text-align: center; padding: 25px; font-size: 13px; }
 
         @keyframes fadeIn {
@@ -166,11 +161,17 @@
 <div class="hero">
     <div class="hero-content">
         <h1>Medical Services<br/>You Can <span>Trust</span></h1>
-        <p>Welcome back, <strong th:text="${userName}" style="color:#4fc3f7;"></strong>!
-            Book appointments with our qualified doctors easily and get the care you deserve.</p>
+        <p>Welcome back,
+            <strong th:text="${userName}" style="color:#4fc3f7;"></strong>!
+            Book appointments with our qualified doctors easily
+            and get the care you deserve.</p>
         <div class="hero-buttons">
-            <a href="#book-section" class="hero-btn-primary">📅 Book Appointment</a>
-            <a href="#appointments-section" class="hero-btn-secondary">📋 My Appointments</a>
+            <a href="#book-section" class="hero-btn-primary">
+                📅 Book Appointment
+            </a>
+            <a href="#appointments-section" class="hero-btn-secondary">
+                📋 My Appointments
+            </a>
         </div>
     </div>
 </div>
@@ -186,7 +187,9 @@
 <!-- SERVICES -->
 <div class="services">
     <h2 class="section-title">Welcome to Our Clinic</h2>
-    <p class="section-subtitle">We provide the best healthcare services for you and your family</p>
+    <p class="section-subtitle">
+        We provide the best healthcare services for you and your family
+    </p>
     <div class="services-grid">
         <div class="service-card">
             <div class="service-icon">🚑</div>
@@ -226,7 +229,8 @@
     <div class="book-inner">
         <div class="book-left">
             <h2>📅 Book an Appointment</h2>
-            <p>Select your preferred doctor and date. Available time slots will be shown automatically!</p>
+            <p>Select your preferred doctor and date.
+                Available time slots will be shown automatically!</p>
             <div class="book-feature">
                 <span class="book-feature-icon">✅</span>
                 Choose from our qualified doctors
@@ -257,18 +261,20 @@
             </div>
 
             <form action="/appointments/book" method="post">
-                <input type="hidden" name="patientName" th:value="${userName}"/>
+                <input type="hidden" name="patientName"
+                       th:value="${userName}"/>
 
                 <!-- Select Doctor -->
                 <div class="book-form-group">
                     <label>Select Doctor</label>
-                    <select name="doctorName" id="doctorSelect" required
-                            onchange="updateSlots()">
+                    <select name="doctorName" id="doctorSelect"
+                            required onchange="updateSlots()">
                         <option value="">-- Select a Doctor --</option>
                         <option th:each="doctor : ${doctors}"
                                 th:value="${doctor.name}"
                                 th:selected="${doctor.name == selectedDoctor}"
-                                th:text="${doctor.name} + ' - ' + ${doctor.specialization}">
+                                th:text="${doctor.name} + ' - ' +
+                                         ${doctor.specialization}">
                         </option>
                     </select>
                 </div>
@@ -276,36 +282,46 @@
                 <!-- Doctor Availability Info -->
                 <div th:if="${selectedDoctor != null and selectedDoctor != ''}"
                      style="margin-bottom:18px;">
-                    <label style="display:block; font-size:13px; font-weight:600;
-                                  color:#0a2342; margin-bottom:8px;">
+                    <label style="display:block; font-size:13px;
+                                  font-weight:600; color:#0a2342;
+                                  margin-bottom:8px;">
                         📋 Doctor Availability
                     </label>
                     <div th:each="s : ${availableSchedules}"
                          th:if="${s.doctorName == selectedDoctor}"
                          style="background:#f8f9fa; border:2px solid #e3f2fd;
-                                border-left:5px solid #1976d2; border-radius:10px;
-                                padding:15px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                                border-left:5px solid #1976d2;
+                                border-radius:10px; padding:15px;">
+                        <div style="display:flex; justify-content:space-between;
+                                    align-items:center;">
                             <div>
-                                <p style="font-size:13px; color:#555; margin-bottom:4px;">
+                                <p style="font-size:13px; color:#555;
+                                          margin-bottom:4px;">
                                     📅 <span th:text="${s.availableDays}"></span>
                                 </p>
-                                <p style="font-size:13px; color:#555; margin-bottom:4px;">
+                                <p style="font-size:13px; color:#555;
+                                          margin-bottom:4px;">
                                     ⏰ <span th:text="${s.startTime}"></span>
                                     — <span th:text="${s.endTime}"></span>
                                 </p>
-                                <p style="font-size:13px; color:#555; margin-bottom:4px;">
-                                    🚪 Room: <span th:text="${s.roomNumber}"></span>
+                                <p style="font-size:13px; color:#555;
+                                          margin-bottom:4px;">
+                                    🚪 Room:
+                                    <span th:text="${s.roomNumber}"></span>
                                 </p>
                                 <p style="font-size:13px; color:#555;">
-                                    ⏱️ <span th:text="${s.slotDuration}"></span> min per slot
+                                    ⏱️ <span th:text="${s.slotDuration}"></span>
+                                    min per slot
                                 </p>
                             </div>
                             <div style="text-align:center; background:#e8f5e9;
                                         border-radius:10px; padding:12px 18px;">
-                                <p style="font-size:24px; font-weight:800; color:#2e7d32; margin:0;"
-                                   th:text="${s.maxPatients - s.currentPatients}"></p>
-                                <p style="font-size:11px; color:#555; margin:0;">slots left</p>
+                                <p style="font-size:24px; font-weight:800;
+                                          color:#2e7d32; margin:0;"
+                                   th:text="${s.maxPatients}"></p>
+                                <p style="font-size:11px; color:#555; margin:0;">
+                                    slots/day
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -324,8 +340,8 @@
                     <label>Available Time Slots</label>
                     <div th:if="${#lists.isEmpty(availableTimeSlots)}"
                          style="background:#f8f9fa; border:2px solid #e0e0e0;
-                                border-radius:8px; padding:15px; text-align:center;
-                                color:#888; font-size:13px;">
+                                border-radius:8px; padding:15px;
+                                text-align:center; color:#888; font-size:13px;">
                         👆 Select a doctor and date to see available time slots
                     </div>
                     <div th:if="${!#lists.isEmpty(availableTimeSlots)}"
@@ -339,10 +355,10 @@
                                   class="time-slot-btn"
                                   onclick="selectSlot(this)"
                                   style="display:block; padding:8px 14px;
-                                         border:2px solid #e0e0e0; border-radius:8px;
-                                         font-size:13px; font-weight:600;
-                                         transition:all 0.3s ease; background:white;
-                                         cursor:pointer;">
+                                         border:2px solid #e0e0e0;
+                                         border-radius:8px; font-size:13px;
+                                         font-weight:600; transition:all 0.3s ease;
+                                         background:white; cursor:pointer;">
                             </span>
                         </label>
                     </div>
@@ -370,7 +386,8 @@
 <div id="appointments-section" class="appointments-section">
     <div class="appt-header">
         <h2>📋 My Appointments</h2>
-        <span th:text="${#lists.size(myAppointments)} + ' appointment(s) found'"></span>
+        <span th:text="${#lists.size(myAppointments)} +
+                       ' appointment(s) found'"></span>
     </div>
 
     <div th:if="${#lists.isEmpty(myAppointments)}" class="empty-state">
@@ -388,11 +405,17 @@
         </div>
         <div class="appt-badges">
             <span class="badge"
-                  th:classappend="${a.status == 'Confirmed'} ? 'badge-green' : (${a.status == 'Pending'} ? 'badge-orange' : 'badge-red')"
+                  th:classappend="${a.status == 'Confirmed'} ? 'badge-green' :
+                                  (${a.status == 'Pending'} ? 'badge-orange' :
+                                  'badge-red')"
                   th:text="${a.status}"></span>
             <span class="badge"
-                  th:classappend="${a.urgency == 1} ? 'badge-red' : (${a.urgency == 2} ? 'badge-orange' : 'badge-green')"
-                  th:text="${a.urgency == 1} ? '🔴 High' : (${a.urgency == 2} ? '🟠 Medium' : '🟢 Low')"></span>
+                  th:classappend="${a.urgency == 1} ? 'badge-red' :
+                                  (${a.urgency == 2} ? 'badge-orange' :
+                                  'badge-green')"
+                  th:text="${a.urgency == 1} ? '🔴 High' :
+                            (${a.urgency == 2} ? '🟠 Medium' : '🟢 Low')">
+            </span>
         </div>
     </div>
 </div>
