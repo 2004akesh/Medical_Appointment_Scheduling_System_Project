@@ -113,6 +113,22 @@
                     ⏰ Max patients will be recalculated automatically
                 </small>
             </div>
+            <div class="form-group">
+                <label>Schedule Status</label>
+                <select th:field="*{status}">
+                    <option value="Available"
+                            th:selected="${schedule.status == 'Available'}">
+                        ✅ Available
+                    </option>
+                    <option value="Full"
+                            th:selected="${schedule.status == 'Full'}">
+                        🔴 Full
+                    </option>
+                </select>
+                <small style="color:#888; font-size:12px; margin-top:4px; display:block;">
+                    ⚠️ Set to Full to stop patients from booking
+                </small>
+            </div>
 
             <div style="background:#e3f2fd; border-radius:10px;
                         padding:15px; margin-bottom:20px;">
