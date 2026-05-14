@@ -91,7 +91,6 @@ public class AppointmentController {
         model.addAttribute("selectedDate", date);
         model.addAttribute("selectedPatient", patientName);
 
-        // Get booked slots
         List<String> bookedSlots = appointmentService.getAll().stream()
                 .filter(a -> a.getDoctorName().equals(doctorName)
                         && a.getDate().equals(date)
@@ -141,7 +140,6 @@ public class AppointmentController {
         model.addAttribute("selectedPatient", appointment.getPatientName());
         model.addAttribute("selectedTimeSlot", appointment.getTimeSlot());
 
-        // Get booked slots excluding current appointment
         List<String> bookedSlots = appointmentService.getAll().stream()
                 .filter(a -> a.getDoctorName().equals(appointment.getDoctorName())
                         && a.getDate().equals(appointment.getDate())
@@ -153,7 +151,6 @@ public class AppointmentController {
         List<String> availableSlots = schedulingService
                 .getAvailableSlots(appointment.getDoctorName(), bookedSlots);
 
-        // Add current time slot back
         if (!availableSlots.contains(appointment.getTimeSlot())) {
             availableSlots.add(0, appointment.getTimeSlot());
         }
@@ -183,7 +180,6 @@ public class AppointmentController {
         model.addAttribute("selectedPatient", patientName);
         model.addAttribute("selectedTimeSlot", "");
 
-        // Get booked slots excluding current appointment
         List<String> bookedSlots = appointmentService.getAll().stream()
                 .filter(a -> a.getDoctorName().equals(doctorName)
                         && a.getDate().equals(date)
@@ -236,7 +232,7 @@ public class AppointmentController {
                                   @RequestParam String timeSlot,
                                   @RequestParam int urgency,
                                   HttpSession session) {
-        // Check if slot already booked
+
         if (appointmentService.isSlotAlreadyBooked(
                 doctorName, date, timeSlot)) {
             session.setAttribute("bookingError",
@@ -245,7 +241,6 @@ public class AppointmentController {
             return "redirect:/home/patient";
         }
 
-        // Save appointment
         Appointment appointment = new Appointment();
         appointment.setPatientName(patientName);
         appointment.setDoctorName(doctorName);
