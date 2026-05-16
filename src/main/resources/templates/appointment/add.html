@@ -197,6 +197,11 @@
     el.style.background = '#e3f2fd';
     el.style.color = '#1976d2';
   }
+  // Set minimum date to today - cannot select past dates
+  document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('dateInput').min = today;
+  });
 </script>
 
 </body>

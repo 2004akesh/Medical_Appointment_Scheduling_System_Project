@@ -25,18 +25,22 @@ public class AppointmentController {
         return "ADMIN".equals(role) || "DOCTOR".equals(role);
     }
 
+
     @GetMapping
     public String list(HttpSession session, Model model) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
-        model.addAttribute("appointments", appointmentService.getAllAppointments());
+        model.addAttribute("appointments",
+                appointmentService.getAllAppointments());
         model.addAttribute("sortType", "default");
         return "appointment/list";
     }
 
+
     @GetMapping("/sort-by-priority")
     public String sortByPriority(HttpSession session, Model model) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
-        model.addAttribute("appointments", appointmentService.getAppointmentsByPriority());
+        model.addAttribute("appointments",
+                appointmentService.getAppointmentsByPriority());
         model.addAttribute("sortType", "priority");
         return "appointment/list";
     }
@@ -45,14 +49,17 @@ public class AppointmentController {
     @GetMapping("/sort-by-time")
     public String sortByTime(HttpSession session, Model model) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
-        model.addAttribute("appointments", appointmentService.getAppointmentsSortedByTime());
+        model.addAttribute("appointments",
+                appointmentService.getAppointmentsSortedByTime());
         model.addAttribute("sortType", "time");
         return "appointment/list";
     }
 
+
     @GetMapping("/add")
     public String showAddForm(HttpSession session, Model model) {
-        if (session.getAttribute("userRole") == null) return "redirect:/login";
+        if (session.getAttribute("userRole") == null)
+            return "redirect:/login";
         model.addAttribute("appointment", new Appointment());
         model.addAttribute("doctors", doctorService.getApprovedDoctors());
         model.addAttribute("patients", patientService.getApprovedPatients());
@@ -65,13 +72,15 @@ public class AppointmentController {
         return "appointment/add";
     }
 
+
     @GetMapping("/add/slots")
     public String getAvailableSlots(
             @RequestParam String doctorName,
             @RequestParam String date,
             @RequestParam(required = false, defaultValue = "") String patientName,
             HttpSession session, Model model) {
-        if (session.getAttribute("userRole") == null) return "redirect:/login";
+        if (session.getAttribute("userRole") == null)
+            return "redirect:/login";
 
         model.addAttribute("appointment", new Appointment());
         model.addAttribute("doctors", doctorService.getApprovedDoctors());
@@ -89,9 +98,8 @@ public class AppointmentController {
                 .map(a -> a.getTimeSlot())
                 .toList();
 
-        List<String> availableSlots = schedulingService.getAvailableSlots(
-                doctorName, bookedSlots);
-
+        List<String> availableSlots = schedulingService
+                .getAvailableSlots(doctorName, bookedSlots);
         model.addAttribute("availableTimeSlots", availableSlots);
         return "appointment/add";
     }
@@ -105,7 +113,6 @@ public class AppointmentController {
                       @RequestParam String timeSlot,
                       @RequestParam int urgency) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
-
         Appointment appointment = new Appointment();
         appointment.setPatientName(patientName);
         appointment.setDoctorName(doctorName);
@@ -114,18 +121,9 @@ public class AppointmentController {
         appointment.setUrgency(urgency);
         appointment.setStatus("Pending");
         appointmentService.saveAppointment(appointment);
-
-        // Update doctor's current patients count
-        List<com.healthcare.healthcaremanagement.scheduling.Schedule> schedules =
-                schedulingService.getSchedulesByDoctor(doctorName);
-        if (!schedules.isEmpty()) {
-            com.healthcare.healthcaremanagement.scheduling.Schedule schedule =
-                    schedules.get(0);
-            schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
-            schedulingService.updateSchedule(schedule.getId(), schedule);
-        }
         return "redirect:/appointments";
     }
+
 
     @GetMapping("/edit/{id}")
     public String showEditForm(HttpSession session,
@@ -150,8 +148,8 @@ public class AppointmentController {
                 .map(a -> a.getTimeSlot())
                 .toList();
 
-        List<String> availableSlots = schedulingService.getAvailableSlots(
-                appointment.getDoctorName(), bookedSlots);
+        List<String> availableSlots = schedulingService
+                .getAvailableSlots(appointment.getDoctorName(), bookedSlots);
 
         if (!availableSlots.contains(appointment.getTimeSlot())) {
             availableSlots.add(0, appointment.getTimeSlot());
@@ -161,14 +159,13 @@ public class AppointmentController {
         return "appointment/edit";
     }
 
+
     @GetMapping("/edit/{id}/slots")
     public String getEditAvailableSlots(
             @PathVariable String id,
             @RequestParam String doctorName,
             @RequestParam String date,
             @RequestParam(required = false, defaultValue = "") String patientName,
-            @RequestParam(required = false, defaultValue = "") String status,
-            @RequestParam(required = false, defaultValue = "1") int urgency,
             HttpSession session, Model model) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
 
@@ -182,8 +179,6 @@ public class AppointmentController {
         model.addAttribute("selectedDate", date);
         model.addAttribute("selectedPatient", patientName);
         model.addAttribute("selectedTimeSlot", "");
-        model.addAttribute("selectedStatus", status);
-        model.addAttribute("selectedUrgency", urgency);
 
         List<String> bookedSlots = appointmentService.getAll().stream()
                 .filter(a -> a.getDoctorName().equals(doctorName)
@@ -193,12 +188,12 @@ public class AppointmentController {
                 .map(a -> a.getTimeSlot())
                 .toList();
 
-        List<String> availableSlots = schedulingService.getAvailableSlots(
-                doctorName, bookedSlots);
-
+        List<String> availableSlots = schedulingService
+                .getAvailableSlots(doctorName, bookedSlots);
         model.addAttribute("availableTimeSlots", availableSlots);
         return "appointment/edit";
     }
+
 
     @PostMapping("/edit/{id}")
     public String edit(HttpSession session,
@@ -221,12 +216,14 @@ public class AppointmentController {
         return "redirect:/appointments";
     }
 
+
     @GetMapping("/delete/{id}")
     public String delete(HttpSession session, @PathVariable String id) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
         appointmentService.deleteAppointment(id);
         return "redirect:/appointments";
     }
+
 
     @PostMapping("/book")
     public String bookAppointment(@RequestParam String patientName,
@@ -236,9 +233,11 @@ public class AppointmentController {
                                   @RequestParam int urgency,
                                   HttpSession session) {
 
-        if (appointmentService.isSlotAlreadyBooked(doctorName, date, timeSlot)) {
+        if (appointmentService.isSlotAlreadyBooked(
+                doctorName, date, timeSlot)) {
             session.setAttribute("bookingError",
-                    "Sorry! This time slot is already booked! Please choose another.");
+                    "Sorry! This time slot is already booked! " +
+                            "Please choose another.");
             return "redirect:/home/patient";
         }
 
@@ -250,15 +249,6 @@ public class AppointmentController {
         appointment.setUrgency(urgency);
         appointment.setStatus("Pending");
         appointmentService.saveAppointment(appointment);
-
-        List<com.healthcare.healthcaremanagement.scheduling.Schedule> schedules =
-                schedulingService.getSchedulesByDoctor(doctorName);
-        if (!schedules.isEmpty()) {
-            com.healthcare.healthcaremanagement.scheduling.Schedule schedule =
-                    schedules.get(0);
-            schedule.setCurrentPatients(schedule.getCurrentPatients() + 1);
-            schedulingService.updateSchedule(schedule.getId(), schedule);
-        }
 
         session.setAttribute("bookingError", null);
         return "redirect:/home/patient";

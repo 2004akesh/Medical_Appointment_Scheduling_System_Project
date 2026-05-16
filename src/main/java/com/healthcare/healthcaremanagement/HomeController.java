@@ -12,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.*;
 
 @Controller
@@ -29,7 +28,8 @@ public class HomeController {
     public String adminHome(HttpSession session, Model model) {
         if (!"ADMIN".equals(session.getAttribute("userRole")))
             return "redirect:/login";
-        model.addAttribute("userName", session.getAttribute("loggedInUser"));
+        model.addAttribute("userName",
+                session.getAttribute("loggedInUser"));
         int pendingCount = doctorService.getPendingDoctors().size()
                 + patientService.getPendingPatients().size();
         model.addAttribute("pendingCount", pendingCount);
@@ -40,11 +40,13 @@ public class HomeController {
     public String doctorHome(HttpSession session, Model model) {
         if (!"DOCTOR".equals(session.getAttribute("userRole")))
             return "redirect:/login";
-        model.addAttribute("userName", session.getAttribute("loggedInUser"));
+        model.addAttribute("userName",
+                session.getAttribute("loggedInUser"));
         String doctorName = (String) session.getAttribute("loggedInUser");
-        model.addAttribute("myAppointments", appointmentService.getAll().stream()
-                .filter(a -> a.getDoctorName().equals(doctorName))
-                .toList());
+        model.addAttribute("myAppointments",
+                appointmentService.getAll().stream()
+                        .filter(a -> a.getDoctorName().equals(doctorName))
+                        .toList());
         return "home/doctor";
     }
 
@@ -53,21 +55,26 @@ public class HomeController {
         if (!"PATIENT".equals(session.getAttribute("userRole")))
             return "redirect:/login";
 
-        model.addAttribute("userName", session.getAttribute("loggedInUser"));
-        model.addAttribute("doctors", doctorService.getApprovedDoctors());
+        model.addAttribute("userName",
+                session.getAttribute("loggedInUser"));
+        model.addAttribute("doctors",
+                doctorService.getApprovedDoctors());
         model.addAttribute("availableSchedules",
                 schedulingService.getAvailableSchedules());
 
         String patientName = (String) session.getAttribute("loggedInUser");
-        model.addAttribute("myAppointments", appointmentService.getAll().stream()
-                .filter(a -> a.getPatientName().equals(patientName))
-                .toList());
+        model.addAttribute("myAppointments",
+                appointmentService.getAll().stream()
+                        .filter(a -> a.getPatientName().equals(patientName))
+                        .toList());
 
         model.addAttribute("availableTimeSlots", new ArrayList<>());
         model.addAttribute("selectedDoctor", "");
+        model.addAttribute("selectedDate", "");
 
         return "home/patient";
     }
+
 
     @GetMapping("/patient/slots")
     public String getAvailableSlots(@RequestParam String doctorName,
@@ -76,15 +83,18 @@ public class HomeController {
         if (!"PATIENT".equals(session.getAttribute("userRole")))
             return "redirect:/login";
 
-        model.addAttribute("userName", session.getAttribute("loggedInUser"));
-        model.addAttribute("doctors", doctorService.getApprovedDoctors());
+        model.addAttribute("userName",
+                session.getAttribute("loggedInUser"));
+        model.addAttribute("doctors",
+                doctorService.getApprovedDoctors());
         model.addAttribute("availableSchedules",
                 schedulingService.getAvailableSchedules());
 
         String patientName = (String) session.getAttribute("loggedInUser");
-        model.addAttribute("myAppointments", appointmentService.getAll().stream()
-                .filter(a -> a.getPatientName().equals(patientName))
-                .toList());
+        model.addAttribute("myAppointments",
+                appointmentService.getAll().stream()
+                        .filter(a -> a.getPatientName().equals(patientName))
+                        .toList());
 
         List<String> bookedSlots = appointmentService.getAll().stream()
                 .filter(a -> a.getDoctorName().equals(doctorName)
@@ -93,8 +103,8 @@ public class HomeController {
                 .map(a -> a.getTimeSlot())
                 .toList();
 
-        List<String> availableSlots = schedulingService.getAvailableSlots(
-                doctorName, bookedSlots);
+        List<String> availableSlots = schedulingService
+                .getAvailableSlots(doctorName, bookedSlots);
 
         model.addAttribute("availableTimeSlots", availableSlots);
         model.addAttribute("selectedDoctor", doctorName);
