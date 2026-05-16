@@ -72,6 +72,27 @@
                 th:text="${schedules.?[status == 'Full'].size()}">0</h3>
             <p style="color:#888; font-size:12px; margin-top:4px;">Full</p>
         </div>
+        <div style="background:white; border-radius:12px; padding:15px 20px;
+                    box-shadow:0 4px 15px rgba(0,0,0,0.07);
+                    text-align:center; flex:1;">
+            <h3 style="font-size:24px; color:#e65100; font-weight:800;"
+                th:text="${totalBookedToday}">0</h3>
+            <p style="color:#888; font-size:12px; margin-top:4px;">
+                Booked Today
+            </p>
+        </div>
+    </div>
+
+    <!-- Today's date info -->
+    <div style="background:#e3f2fd; border-left:5px solid #1976d2;
+                border-radius:10px; padding:12px 20px; margin-bottom:20px;
+                display:flex; align-items:center; gap:10px;">
+        <span style="font-size:20px;">📅</span>
+        <p style="color:#1565c0; font-size:13px;">
+            <strong>Today:</strong>
+            <span th:text="${today}"></span> —
+            Booked count shows appointments for today only
+        </p>
     </div>
 
     <!-- SEARCH BAR -->
@@ -106,7 +127,8 @@
                 <th>Time Period</th>
                 <th>Room</th>
                 <th>Slot Duration</th>
-                <th>Max Patients/Day</th>
+                <th>Max/Day</th>
+                <th>Booked Today</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
@@ -131,7 +153,29 @@
                         <span class="badge badge-blue"
                               th:text="${s.slotDuration} + ' min'"></span>
                 </td>
-                <td th:text="${s.maxPatients} + ' patients'"></td>
+                <td th:text="${s.maxPatients}"></td>
+                <td>
+                    <th:block th:with="booked=${bookedToday[s.doctorName] != null ?
+                                          bookedToday[s.doctorName] : 0}">
+                            <span th:text="${booked} + '/' + ${s.maxPatients}"
+                                  th:style="${booked >= s.maxPatients} ?
+                                            'color:#c62828; font-weight:700;' :
+                                            'color:#2e7d32; font-weight:700;'">
+                            </span>
+                        <!-- Progress bar -->
+                        <div style="background:#f0f0f0; border-radius:10px;
+                                        height:6px; margin-top:5px; width:80px;">
+                            <div th:style="'width:' +
+                                              (${s.maxPatients} > 0 ?
+                                              (${booked} * 100 / ${s.maxPatients}) : 0) +
+                                              '%; background:' +
+                                              (${booked} >= ${s.maxPatients} ?
+                                              '#c62828' : '#1976d2') +
+                                              '; border-radius:10px; height:6px;'">
+                            </div>
+                        </div>
+                    </th:block>
+                </td>
                 <td>
                         <span class="badge"
                               th:classappend="${s.status == 'Available'} ?
@@ -153,11 +197,9 @@
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(schedules)}">
-                <td colspan="9"
+                <td colspan="10"
                     style="text-align:center; color:#888; padding:30px;">
-                    <div style="font-size:40px; margin-bottom:10px;">
-                        📭
-                    </div>
+                    <div style="font-size:40px; margin-bottom:10px;">📭</div>
                     <span th:if="${session.userRole == 'DOCTOR'}">
                             You haven't added your schedule yet!
                         </span>
