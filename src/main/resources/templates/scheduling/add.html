@@ -47,10 +47,21 @@
 
             <div class="form-group">
                 <label>Doctor Name</label>
-                <input type="text" th:field="*{doctorName}"
-                       th:readonly="${session.userRole == 'DOCTOR'}"
-                       th:style="${session.userRole == 'DOCTOR'} ? 'background:#f5f5f5;' : ''"
-                       placeholder="Enter doctor name" required/>
+                <!-- Show dropdown for Admin -->
+                <select th:if="${session.userRole == 'ADMIN'}"
+                        th:field="*{doctorName}" required>
+                    <option value="">-- Select Doctor --</option>
+                    <option th:each="d : ${doctors}"
+                            th:value="${d.name}"
+                            th:text="${d.name} + ' - ' + ${d.specialization}">
+                    </option>
+                </select>
+                <!-- Show readonly for Doctor -->
+                <input th:if="${session.userRole == 'DOCTOR'}"
+                       type="text" th:field="*{doctorName}"
+                       readonly
+                       style="background:#f5f5f5;"
+                       required/>
                 <small th:if="${session.userRole == 'DOCTOR'}"
                        style="color:#888; font-size:12px;">
                     * Auto-filled with your name
