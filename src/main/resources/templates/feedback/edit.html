@@ -1,8 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Edit Feedback</title>
     <link rel="stylesheet" th:href="@{/style.css}"/>
+    <style>
+        .rating-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .rating-option { flex: 1; min-width: 80px; }
+        .rating-option input[type="radio"] { display: none; }
+        .rating-option label {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .rating-option input[type="radio"]:checked + label {
+            border-color: #1976d2;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .rating-option label:hover {
+            border-color: #1976d2;
+            background: #f5f9ff;
+        }
+    </style>
 </head>
 <body>
 <div class="navbar">
@@ -25,109 +54,100 @@
         <a href="/logout" class="logout-btn">🚪 Logout</a>
     </nav>
 </div>
+
 <div class="main-content">
     <div class="page-header">
         <div>
-            <h1>Edit Feedback</h1>
-            <p>Update your feedback</p>
+            <h1>✏️ Edit Feedback</h1>
+            <p>Update your feedback details</p>
         </div>
         <a href="/feedback" class="btn btn-primary">← Back to List</a>
     </div>
-    <div class="card" style="max-width: 600px;">
+
+    <div class="card" style="max-width: 650px;">
         <form th:action="@{/feedback/edit/{id}(id=${feedback.id})}"
               th:object="${feedback}" method="post">
+
+            <!-- Patient Name -->
             <div class="form-group">
                 <label>Patient Name</label>
                 <input type="text" th:field="*{patientName}" required/>
             </div>
+
+            <!-- Doctor Name Dropdown -->
             <div class="form-group">
                 <label>Doctor Name</label>
-                <input type="text" th:field="*{doctorName}" required/>
+                <select th:field="*{doctorName}" required>
+                    <option value="">-- Select Doctor --</option>
+                    <option th:each="d : ${doctors}"
+                            th:value="${d.name}"
+                            th:selected="${d.name == feedback.doctorName}"
+                            th:text="'Dr. ' + ${d.name} + ' - ' + ${d.specialization}">
+                    </option>
+                </select>
             </div>
+
+            <!-- Message -->
             <div class="form-group">
-                <label>Message</label>
-                <textarea th:field="*{message}" rows="4"
+                <label>Your Experience</label>
+                <textarea th:field="*{message}"
                           placeholder="Update your feedback message..."
-                          style="width:100%; padding:12px 15px; border:2px solid #e0e0e0;
-                 border-radius:10px; font-size:14px; outline:none;
-                 resize:vertical; transition:border 0.3s ease;
-                 font-family:inherit;"
+                          rows="4"
+                          style="width:100%; padding:12px 15px;
+                                 border:2px solid #e0e0e0; border-radius:10px;
+                                 font-size:14px; outline:none; resize:vertical;
+                                 transition:border 0.3s ease; font-family:inherit;"
                           onfocus="this.style.borderColor='#1976d2'"
                           onblur="this.style.borderColor='#e0e0e0'"
                           required></textarea>
             </div>
+
+            <!-- Rating -->
             <div class="form-group">
                 <label>Rating</label>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <div style="flex:1; min-width:80px;">
-                        <input type="radio" th:field="*{rating}" id="r5" value="5" style="display:none;"/>
-                        <label for="r5"
-                               style="display:block; text-align:center; padding:10px;
-                          border:2px solid #e0e0e0; border-radius:10px;
-                          cursor:pointer; font-size:13px; font-weight:600;
-                          transition:all 0.3s ease;"
-                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
-                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
-                            ⭐⭐⭐⭐⭐<br/>Excellent
-                        </label>
+                <div class="rating-group">
+                    <div class="rating-option">
+                        <input type="radio" th:field="*{rating}"
+                               id="r5" value="5"/>
+                        <label for="r5">⭐⭐⭐⭐⭐<br/>Excellent</label>
                     </div>
-                    <div style="flex:1; min-width:80px;">
-                        <input type="radio" th:field="*{rating}" id="r4" value="4" style="display:none;"/>
-                        <label for="r4"
-                               style="display:block; text-align:center; padding:10px;
-                          border:2px solid #e0e0e0; border-radius:10px;
-                          cursor:pointer; font-size:13px; font-weight:600;
-                          transition:all 0.3s ease;"
-                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
-                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
-                            ⭐⭐⭐⭐<br/>Good
-                        </label>
+                    <div class="rating-option">
+                        <input type="radio" th:field="*{rating}"
+                               id="r4" value="4"/>
+                        <label for="r4">⭐⭐⭐⭐<br/>Good</label>
                     </div>
-                    <div style="flex:1; min-width:80px;">
-                        <input type="radio" th:field="*{rating}" id="r3" value="3" style="display:none;"/>
-                        <label for="r3"
-                               style="display:block; text-align:center; padding:10px;
-                          border:2px solid #e0e0e0; border-radius:10px;
-                          cursor:pointer; font-size:13px; font-weight:600;
-                          transition:all 0.3s ease;"
-                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
-                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
-                            ⭐⭐⭐<br/>Average
-                        </label>
+                    <div class="rating-option">
+                        <input type="radio" th:field="*{rating}"
+                               id="r3" value="3"/>
+                        <label for="r3">⭐⭐⭐<br/>Average</label>
                     </div>
-                    <div style="flex:1; min-width:80px;">
-                        <input type="radio" th:field="*{rating}" id="r2" value="2" style="display:none;"/>
-                        <label for="r2"
-                               style="display:block; text-align:center; padding:10px;
-                          border:2px solid #e0e0e0; border-radius:10px;
-                          cursor:pointer; font-size:13px; font-weight:600;
-                          transition:all 0.3s ease;"
-                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
-                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
-                            ⭐⭐<br/>Poor
-                        </label>
+                    <div class="rating-option">
+                        <input type="radio" th:field="*{rating}"
+                               id="r2" value="2"/>
+                        <label for="r2">⭐⭐<br/>Poor</label>
                     </div>
-                    <div style="flex:1; min-width:80px;">
-                        <input type="radio" th:field="*{rating}" id="r1" value="1" style="display:none;"/>
-                        <label for="r1"
-                               style="display:block; text-align:center; padding:10px;
-                          border:2px solid #e0e0e0; border-radius:10px;
-                          cursor:pointer; font-size:13px; font-weight:600;
-                          transition:all 0.3s ease;"
-                               onmouseover="this.style.borderColor='#1976d2'; this.style.background='#f5f9ff'"
-                               onmouseout="this.style.borderColor='#e0e0e0'; this.style.background='white'">
-                            ⭐<br/>Very Poor
-                        </label>
+                    <div class="rating-option">
+                        <input type="radio" th:field="*{rating}"
+                               id="r1" value="1"/>
+                        <label for="r1">⭐<br/>Very Poor</label>
                     </div>
                 </div>
             </div>
+
+            <!-- Date -->
             <div class="form-group">
                 <label>Date</label>
                 <input type="date" th:field="*{date}" required/>
             </div>
-            <button type="submit" class="btn btn-success">Update Feedback</button>
-            <a href="/feedback" class="btn btn-danger"
-               style="margin-left:10px;">Cancel</a>
+
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button type="submit" class="btn btn-success"
+                        style="flex:1; padding:13px;">
+                    ✅ Update Feedback
+                </button>
+                <a href="/feedback" class="btn btn-danger"
+                   style="padding:13px 20px;">Cancel</a>
+            </div>
         </form>
     </div>
 </div>
