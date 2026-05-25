@@ -34,10 +34,7 @@ public class SchedulingService implements ManagementService<Schedule> {
         return slots;
     }
 
-    // =============================================
-    // GET AVAILABLE SLOTS
-    // Removes already booked slots
-    // =============================================
+
     public List<String> getAvailableSlots(String doctorName,
                                           List<String> bookedSlots) {
         List<Schedule> schedules = getSchedulesByDoctor(doctorName);
