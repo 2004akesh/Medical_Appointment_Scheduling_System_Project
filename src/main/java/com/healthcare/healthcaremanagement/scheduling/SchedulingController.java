@@ -24,9 +24,7 @@ public class SchedulingController {
         return "ADMIN".equals(role) || "DOCTOR".equals(role);
     }
 
-    // =============================================
-    // LIST
-    // =============================================
+
     @GetMapping
     public String list(HttpSession session, Model model) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
@@ -41,10 +39,9 @@ public class SchedulingController {
             schedules = schedulingService.getAllSchedules();
         }
 
-        // Get today's date
         String today = java.time.LocalDate.now().toString();
 
-        // Count booked slots per doctor for today
+
         Map<String, Long> bookedToday = appointmentService.getAll().stream()
                 .filter(a -> a.getDate().equals(today)
                         && !a.getStatus().equals("Cancelled"))
@@ -52,7 +49,7 @@ public class SchedulingController {
                         a -> a.getDoctorName(),
                         Collectors.counting()));
 
-        // Calculate total booked today ← ADD THIS
+
         long totalBooked = bookedToday.values().stream()
                 .mapToLong(v -> v).sum();
 
@@ -62,9 +59,7 @@ public class SchedulingController {
         model.addAttribute("today", today);
         return "scheduling/list";
     }
-    // =============================================
-    // ADD - Show form
-    // =============================================
+
     @GetMapping("/add")
     public String showAddForm(HttpSession session, Model model) {
         if (!isAdminOrDoctor(session)) return "redirect:/login";
@@ -77,9 +72,7 @@ public class SchedulingController {
         model.addAttribute("doctors", doctorService.getApprovedDoctors());
         return "scheduling/add";
     }
-    // =============================================
-    // ADD - Save
-    // =============================================
+
     @PostMapping("/add")
     public String add(HttpSession session,
                       @ModelAttribute Schedule schedule) {
@@ -92,9 +85,6 @@ public class SchedulingController {
         return "redirect:/scheduling";
     }
 
-    // =============================================
-    // EDIT - Show form
-    // =============================================
     @GetMapping("/edit/{id}")
     public String showEditForm(HttpSession session,
                                @PathVariable String id, Model model) {
@@ -104,9 +94,7 @@ public class SchedulingController {
         return "scheduling/edit";
     }
 
-    // =============================================
-    // EDIT - Save
-    // =============================================
+
     @PostMapping("/edit/{id}")
     public String edit(HttpSession session,
                        @PathVariable String id,
