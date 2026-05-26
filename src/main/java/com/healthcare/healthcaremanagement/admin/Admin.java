@@ -2,7 +2,7 @@ package com.healthcare.healthcaremanagement.admin;
 
 import com.healthcare.healthcaremanagement.Person;
 
-// Inheritance - Admin extends Person
+
 public class Admin extends Person {
     private String username;
     private String password;
@@ -24,7 +24,7 @@ public class Admin extends Person {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    // Polymorphism
+  
     @Override
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }

@@ -82,6 +82,8 @@ public class AdminService implements ManagementService<Admin> {
                         a.getUsername() + "," + a.getPassword() + "," + a.getRole());
                 bw.newLine();
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
